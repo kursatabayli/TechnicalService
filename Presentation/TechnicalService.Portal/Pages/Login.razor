@@ -1,0 +1,76 @@
+﻿@page "/login"
+@attribute [AllowAnonymous]
+
+<PageTitle>Teknik Servis App Personel Paneli | Giriş Yap</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+
+    @if (!Submitting)
+    {
+        <MudForm Model="dto" @ref="form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.LockOpen" Class="mr-2" />
+                        Personel Paneli | Giriş Yap
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen giriş bilgilerinizi giriniz.
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Email"
+                                  Label="E-posta"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Email"
+                                  For="@(() => dto.Email)"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <PasswordField Label="Şifre"
+                                   @bind-Password="dto.Password"
+                                   ValidationExpression="@(() => dto.Password)" />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudCheckBox @bind-Value="dto.RememberMe" Label="Beni Hatırla" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+            </MudGrid>
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="Submit"
+                           Disabled="@Submitting"
+                           StartIcon="@Icons.Material.Filled.Login"
+                           Class="px-6">
+                    @if (!Submitting)
+                    {
+                        <MudText>Giriş Yap</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Giriş yapılıyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+
+            <MudGrid Justify="Justify.Center" Class="mt-4 text-center">
+                <MudItem xs="12" sm="10" md="8">
+                    <MudLink Href="/forgot-password">Şifrenizi mi unuttunuz?</MudLink>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Giriş yapılıyor..." />
+    }
+</MudPaper>

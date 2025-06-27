@@ -1,0 +1,13 @@
+﻿@page "/admin"
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@layout AdminLayout
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Ana Sayfa</PageTitle>
+
+<MudGrid Spacing="3">
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5" Color="Color.Primary">Hoş geldiniz!</MudText>
+    </MudItem>
+</MudGrid>

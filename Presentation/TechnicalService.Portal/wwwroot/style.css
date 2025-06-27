@@ -1,0 +1,166 @@
+﻿
+/*profile.razor*/
+
+.profile-header {
+    background: linear-gradient(45deg, var(--mud-palette-primary) 0%, var(--mud-palette-primary-darken) 100%);
+    border-radius: 12px 12px 0 0;
+}
+
+.avatar-edit {
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.avatar-container:hover .avatar-edit {
+    opacity: 1;
+}
+
+.info-card {
+    transition: transform 0.2s;
+    border-left: 4px solid var(--mud-palette-primary);
+}
+
+    .info-card:hover {
+        transform: translateY(-3px);
+    }
+
+.empty-field {
+    color: var(--mud-palette-text-disabled);
+    font-style: italic;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+.compact-icon-list .mud-list-item-icon {
+    /* Varsayılan 56px genişliği ezin */
+    width: auto; /* Genişliğin içeriğe göre ayarlanmasını deneyin */
+    min-width: 0; /* Olası bir min-width değerini sıfırlayın */
+    /* Varsayılan iç/dış boşlukları sıfırlayın veya azaltın */
+    padding-right: 0; /* İç sağ boşluğu sıfırla (varsa) */
+    margin-right: 8px; /* İkon container'ından SONRA istediğiniz boşluğu verin (örn: 8px) */
+    /* VEYA bu değeri 0 yapıp metin tarafına padding verebilirsiniz */
+    /* İkonu dikeyde ortalamak için flex ayarları genellikle zaten vardır, */
+    /* ama gerekirse ekleyebilirsiniz: */
+    /* display: inline-flex; */
+    /* align-items: center; */
+}
+
+/* Metin tarafında da sol boşluğun SIFIR olduğundan emin olun */
+.compact-icon-list .mud-list-item-text {
+    padding-inline-start: 0; /* veya padding-left: 0; */
+}
+
+/*CreateServiceRecord.razor*/
+
+.form-container {
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-header {
+    border-bottom: 2px solid var(--mud-palette-primary);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.input-icon {
+    margin-right: 8px;
+    color: var(--mud-palette-primary);
+}
+
+
+/*MyServiceRecords*/
+
+.status-chip {
+    min-width: 100px;
+    justify-content: center;
+}
+
+.request-table {
+    --mud-table-border: 1px solid var(--mud-palette-divider);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/*ServiceRecordStatus*/
+
+.mud-stepper-actions {
+    display: none !important;
+}
+
+.status-header-icon {
+    color: var(--mud-palette-primary);
+    margin-right: 8px;
+}
+
+.detail-card {
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+    .detail-card:hover {
+        transform: translateY(-2px);
+    }
+
+.step-description {
+    border-left: 3px solid var(--mud-palette-primary);
+    padding-left: 1rem;
+    margin-left: 8px;
+}
+
+/*MyProducts*/
+
+.product-table {
+    --mud-table-row-hover: var(--mud-palette-primary-lighten-5);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.detail-grid {
+    background: var(--mud-palette-grey-lighten-5);
+    border-top: 2px solid var(--mud-palette-primary-lighten-2);
+}
+
+.info-item {
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+    .info-item:hover {
+        background: var(--mud-palette-background);
+        transform: translateX(4px);
+    }
+
+/* Scrollbar stil */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
+
+
+.rte-container {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .rte-container .blazored-text-editor {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rte-container .ql-container {
+        flex-grow: 1;
+        overflow-y: auto;
+    }

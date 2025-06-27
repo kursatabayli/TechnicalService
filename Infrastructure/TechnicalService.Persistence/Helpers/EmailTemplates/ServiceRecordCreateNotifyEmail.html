@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Servis Kaydınız Oluşturuldu | Teknik Servis App</title>
+    <style>
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+            }
+
+            .button-container a { 
+                width: 100% !important;
+                padding: 16px 0 !important;
+                display: block !important;
+                box-sizing: border-box;
+            }
+
+            .button-container div + div {
+                margin-top: 16px;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f7fa;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);" class="container">
+        <tr>
+            <td style="padding: 32px 40px; background-color: #2A5A8F; border-radius: 8px 8px 0 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="text-align: right; color: #ffffff; font-family: Arial, sans-serif; font-size: 18px;">
+                            Servis Kaydı Bilgilendirmesi
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 40px 40px 32px; font-family: Arial, sans-serif; color: #4a5568;">
+                <h1 style="margin: 0 0 24px; font-size: 24px; color: #2A5A8F;">Servis Kaydınız Başarıyla Oluşturuldu</h1>
+
+                <p style="margin: 0 0 24px; line-height: 1.6;">
+                    Merhaba,
+                </p>
+                <p style="margin: 0 0 24px; line-height: 1.6;">
+                    Teknik Servis App üzerinden oluşturduğunuz servis talebiniz tarafımıza ulaşmıştır. Servis sürecinizle ilgili bilgi almak için aşağıdaki takip numarasını kullanabilirsiniz.
+                </p>
+
+                <div style="background-color: #f0f4f8; padding: 20px; border-radius: 6px; margin: 24px 0; text-align: center;">
+                    <p style="margin: 0; line-height: 1.6; font-size: 16px;">
+                        <strong>Takip Numaranız:</strong> {{TrackingNumber}}
+                    </p>
+                </div>
+
+                <p style="margin: 24px 0 24px; line-height: 1.6;">
+                    Bundan sonraki adım, ürününüzü size en yakın servis noktamıza teslim etmektir. Eğer şehrinizde servis noktamız bulunmuyorsa, lütfen bizimle iletişime geçerek <strong>ücretsiz kargo gönderim kodu</strong> talep ediniz.
+                </p>
+
+                <div style="text-align: center; margin: 32px 0;" class="button-container">
+                    <div>
+                        <a href="https://teknikservisapp.com/service-record-status/{{ServiceRecordId}}"
+                           style="background-color: #2A5A8F; color: #ffffff; padding: 16px 32px;
+                                  text-decoration: none; border-radius: 6px; font-weight: bold;
+                                  display: inline-block; transition: background-color 0.3s;">
+                            Servis Kaydını Görüntüle
+                        </a>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <a href="https://teknikservisapp.com/Locations"
+                           style="background-color: #5a8f2a; color: #ffffff; padding: 16px 32px;
+                                  text-decoration: none; border-radius: 6px; font-weight: bold;
+                                  display: inline-block; transition: background-color 0.3s;">
+                            Servis Lokasyonları
+                        </a>
+                    </div>
+                </div>
+
+                <p style="margin: 24px 0 0; line-height: 1.6; color: #718096; font-size: 14px;">
+                    Sorularınız veya talepleriniz için bu e-postayı yanıtlayabilir veya destek ekibimizle iletişime geçebilirsiniz.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 32px 40px; background-color: #f7fafc; border-radius: 0 0 8px 8px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="font-family: Arial, sans-serif; color: #718096; font-size: 14px;">
+                            <p style="margin: 0 0 8px;">Teknik Servis App Ekibi</p>
+                            <p style="margin: 0 0 8px;">
+                                <a href="https://teknikservisapp.com" style="color: #2A5A8F; text-decoration: none;">teknikservisapp.com</a> |
+                                <a href="mailto:destek@teknikservisapp.com" style="color: #2A5A8F; text-decoration: none;">destek@teknikservisapp.com</a>
+                            </p>
+                            <p style="margin: 16px 0 0; font-size: 12px; color: #a0aec0;">
+                                © 2025 Teknik Servis App. Tüm hakları saklıdır.
+                                <br />
+                                Kocaeli, Türkiye
+                                <br />
+                                <a href="https://teknikservisapp.com/Privacy" style="color: #2A5A8F; text-decoration: none;">Gizlilik Politikası</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

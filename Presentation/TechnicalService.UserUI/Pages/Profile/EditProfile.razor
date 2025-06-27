@@ -1,0 +1,179 @@
+﻿@page "/edit-profile"
+@attribute [Authorize(Policy = nameof(AppPolicies.UserAccesses))]
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Bilgileri Güncelle</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (IsSubmitting)
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Bilgiler yükleniyor...</MudText>
+            </MudItem>
+        </MudGrid>
+    }
+    else if (dto != null)
+    {
+        <MudForm Model="@dto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="3" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Class="mr-2" />
+                        Profil Bilgilerini Güncelle
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen bilgilerinizi kontrol edip güncelleyiniz.
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="dto.Name"
+                                  Label="Ad"
+                                  Placeholder="Adınız"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => dto.Name)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.PersonOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="dto.Surname"
+                                  Label="Soyad"
+                                  Placeholder="Soyadınız"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => dto.Surname)"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="dto.Email"
+                                  Label="E-posta"
+                                  Placeholder="eposta@example.com"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Email"
+                                  For="@(() => dto.Email)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.AlternateEmail"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="dto.PhoneNumber"
+                                  Label="Telefon Numarası"
+                                  Placeholder="5xxxxxxxxx"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Telephone"
+                                  For="@(() => dto.PhoneNumber)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Phone"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudDatePicker @bind-Date="dto.BirthDate"
+                                   Label="Doğum Tarihi"
+                                   Placeholder="gg.aa.yyyy"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   For="@(() => dto.BirthDate)"
+                                   DateFormat="dd.MM.yyyy"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Adornment="Adornment.Start"
+                                   AdornmentIcon="@Icons.Material.Filled.Cake"
+                                   AdornmentColor="Color.Primary"
+                                   MinDate="@DateTime.Today.AddYears(-100)"
+                                   MaxDate="@DateTime.Today.AddYears(-16)"
+                                   ShowToolbar="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudSelect @bind-Value="dto.Gender"
+                               T="GenderDto?"
+                               Label="Cinsiyet"
+                               For="@(() => dto.Gender)"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Adornment="Adornment.Start"
+                               AdornmentIcon="@(dto.Gender == GenderDto.Male ? Icons.Material.Filled.Male : dto.Gender == GenderDto.Female ? Icons.Material.Filled.Female : Icons.Material.Filled.Wc)"
+                               AdornmentColor="Color.Primary"
+                               FullWidth>
+                        @foreach (var gender in Enum.GetValues<GenderDto>())
+                        {
+                            <MudSelectItem T="GenderDto?" Value="@gender">@gender.GetDescription()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Address"
+                                  Label="Adres"
+                                  Placeholder="Açık adresiniz"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Text"
+                                  Lines="3"
+                                  For="@(() => dto.Address)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.LocationOn"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6"
+                           Disabled="@IsSubmitting">
+                    Geri
+                </MudButton>
+                <MudButton OnClick="Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           Disabled="@IsSubmitting"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Güncelle</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Güncelleniyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Profil bilgileri yüklenemedi.</MudText>
+                <MudButton OnClick="NavigateBack" Variant="Variant.Text" Color="Color.Primary" Class="mt-4">Geri Dön</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>

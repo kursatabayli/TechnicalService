@@ -1,0 +1,23 @@
+﻿@using TechnicalService.UserUI.Constants
+<MudDrawer Open="@UIStateOption.drawerOpen"
+           OpenChanged="@HandleDrawerOpenChanged"
+           Breakpoint="Breakpoint.Sm"
+           Variant="DrawerVariant.Mini"
+           ClipMode="DrawerClipMode.Always"
+           Elevation="2">
+    <MudNavMenu Rounded="UIStateOption.drawerOpen"
+                Class="@($"{(UIStateOption.drawerOpen ? "pa-2" : null)} d-flex flex-column")"
+                Style="height: 100%;"
+                Margin="@(UIStateOption.drawerOpen ? Margin.Normal : Margin.None )"
+                Bordered="!UIStateOption.drawerOpen">
+
+        <MudNavLink Href="@UserRouteConstants.Profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Profil</MudNavLink>
+        <MudNavLink Href="@UserRouteConstants.UserProducts" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.LibraryBooks">Ürünlerim</MudNavLink>
+        <MudNavLink Href="@UserRouteConstants.ServiceRecords" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Construction">Servis Kayıtlarım</MudNavLink>
+
+        <MudNavLink Href="logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" Class="mt-auto" ForceLoad="true">
+            <MudText Color="Color.Error">Çıkış Yap</MudText>
+        </MudNavLink>
+
+    </MudNavMenu>
+</MudDrawer>

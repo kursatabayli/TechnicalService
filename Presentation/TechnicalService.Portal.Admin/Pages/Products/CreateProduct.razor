@@ -1,0 +1,115 @@
+﻿@page "/admin/create-product"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.BrandDTOs
+@using TechnicalService.DTOs.DTOs.ProductTypeDTOs
+@using TechnicalService.DTOs.Enums
+
+<PageTitle>Ürün Oluştur</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (!IsSubmitting)
+    {
+        <MudForm Model="@CreateProductDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.AddShoppingCart" Class="mr-2" />
+                        Yeni Ürün Oluştur
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen ürün bilgilerini giriniz.
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string"
+                                  @bind-Value="CreateProductDto.ProductName"
+                                  For="@(() => CreateProductDto.ProductName)"
+                                  Immediate="true"
+                                  Label="Ürün Adı (Model)"
+                                  Placeholder="Örn: RTX 5080, Radeon 7800XT"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.DriveFileRenameOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudAutocomplete T="BrandDto"
+                                     @bind-Value="@CreateProductDto.Brand"
+                                     SearchFunc="SearchBrands"
+                                     ToStringFunc="@(b => b?.BrandName ?? string.Empty)"
+                                     For="@(() => CreateProductDto.Brand)"
+                                     Immediate="true"
+                                     Label="Marka"
+                                     Placeholder="Marka seçiniz veya yazmaya başlayın..."
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.Label"
+                                     AdornmentColor="Color.Primary"
+                                     ResetValueOnEmptyText="true"
+                                     Clearable
+                                     FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudAutocomplete T="ProductTypeDto"
+                                     @bind-Value="@CreateProductDto.ProductType"
+                                     SearchFunc="SearchProductTypes"
+                                     ToStringFunc="@(pt => pt?.Type ?? string.Empty)"
+                                     For="@(() => CreateProductDto.ProductType)"
+                                     Immediate="true"
+                                     Label="Ürün Türü"
+                                     Placeholder="Ürün türü seçiniz veya yazmaya başlayın..."
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.Category"
+                                     AdornmentColor="Color.Primary"
+                                     ResetValueOnEmptyText="true"
+                                     Clearable
+                                     FullWidth />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6">
+                    Geri
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           OnClick="Submit"
+                           Disabled="@IsSubmitting"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Kaydet</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Kaydediliyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Ürün oluşturuluyor..." />
+    }
+</MudPaper>

@@ -1,0 +1,99 @@
+﻿@using TechnicalService.DTOs.DTOs.ServiceRecordStepDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.Managment.Pages.ServiceRecordSteps
+@attribute [Authorize(Policy = nameof(AppPolicies.ManagerAccesses))]
+
+<MudPaper Class="rounded-lg" Elevation="1">
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <MudIcon Icon="@Icons.Material.Filled.Timeline" Color="Color.Primary" Size="Size.Medium" />
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Servis Süreç Adımları</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            @if (ServiceRecordStepsDto == null)
+            {
+                <Loading />
+            }
+            else
+            {
+                <MudStepper Vertical="true" Class="pl-2" NonLinear="IsComplete" ActiveIndex="ServiceRecordStepsDto.Count()" CompletedStepColor="Color.Success">
+
+                    <MudStep Title="Ürün Servise Bekleniyor" Completed="@(ServiceRecordStepsDto != null && ServiceRecordStepsDto.Any())">
+                        <MudPaper Outlined="true" Class="pa-3 my-2 rounded-lg">
+                            <MudText Typo="Typo.body2" Class="text-grey-darken-1">
+                                Ürünün servise ulaşması bekleniyor.
+                            </MudText>
+                        </MudPaper>
+                    </MudStep>
+
+                    @if (ServiceRecordStepsDto != null)
+                    {
+                        @foreach (var step in ServiceRecordStepsDto)
+                        {
+                            <MudStep Title="@step.StepTitle" Completed="@step.IsCompleted">
+                                <ChildContent>
+                                    <MudPaper Outlined="true" Class="pa-3 my-2 rounded-lg">
+                                        <MudItem class="d-flex justify-space-between">
+                                            <MudText Typo="Typo.body1">@step.StepDescription</MudText>
+
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                           Color="Color.Primary"
+                                                           Size="Size.Small"
+                                                           Title="Adımı Güncelle"
+                                                           OnClick="@(() => OpenUpdateServiceStepDialogAsync(step.Id))" />
+                                        </MudItem>
+
+                                        <MudDivider Class="my-2" />
+                                        <MudGrid class="d-flex flex-wrap gap-4">
+                                            <MudItem class="d-flex align-center">
+                                                <MudIcon Icon="@Icons.Material.Filled.Person" Class="mr-1" Size="Size.Small" />
+                                                <MudText Typo="Typo.caption">@step.PersonnelFullName</MudText>
+                                            </MudItem>
+                                            <MudItem class="d-flex align-center">
+                                                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="mr-1" Size="Size.Small" />
+                                                <MudText Typo="Typo.caption">@step.CreatedDate.ToString("dd.MM.yyyy HH:mm")</MudText>
+                                            </MudItem>
+                                            @if (step.CompletedDate.HasValue)
+                                            {
+                                                <MudItem class="d-flex align-center">
+                                                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-1" Size="Size.Small" />
+                                                    <MudText Typo="Typo.caption" Color="Color.Success">@step.CompletedDate.Value.ToString("dd.MM.yyyy HH:mm")</MudText>
+                                                </MudItem>
+                                            }
+                                        </MudGrid>
+                                    </MudPaper>
+                                </ChildContent>
+                            </MudStep>
+                        }
+                    }
+                </MudStepper>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudPaper>
+
+@code {  
+    [Parameter] public bool IsComplete { get; set; }  
+    [Parameter] public List<ServiceRecordStepDto>? ServiceRecordStepsDto { get; set; } = [];  
+    [CascadingParameter] private ServiceRecordDetail ParentComponent { get; set; }  
+    private ServiceRecordDetail serviceRecordDetail => ParentComponent;  
+
+    [Inject] private IDialogService DialogService { get; set; }  
+
+    private async Task OpenUpdateServiceStepDialogAsync(int stepId)  
+    {  
+        var parameters = new DialogParameters<UpdateServiceRecordStep>  
+            {  
+                { nameof(UpdateServiceRecordStep.StepId), stepId }  
+            };  
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true };  
+        var dialog = await DialogService.ShowAsync<UpdateServiceRecordStep>("Servis Adımı Güncelle", parameters, options);  
+        var result = await dialog.Result;  
+        await serviceRecordDetail.LoadServiceRecordSteps();
+    }  
+}

@@ -1,0 +1,82 @@
+﻿@page "/admin/create-technical-service"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.TechnicalServiceDTOs
+@using TechnicalService.DTOs.Enums
+
+<PageTitle>Yeni Teknik Servis Oluştur</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (!IsSubmitting)
+    {
+        <MudForm Model="@CreateTechnicalServiceDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.AddBusiness" Class="mr-2" />
+                        Yeni Teknik Servis Oluştur
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen yeni teknik servisin bilgilerini eksiksiz giriniz.
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="CreateTechnicalServiceDto.ServiceName" For="@(() => CreateTechnicalServiceDto.ServiceName)" Immediate="true" Label="Servis Adı" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Store" AdornmentColor="Color.Primary" Clearable FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="CreateTechnicalServiceDto.Phone" For="@(() => CreateTechnicalServiceDto.Phone)" Immediate="true" Label="Telefon Numarası" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" AdornmentColor="Color.Primary" FullWidth />
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12" />
+
+                <MudItem xs="12" sm="5" md="4">
+                    <MudTextField T="string" @bind-Value="CreateTechnicalServiceDto.City" For="@(() => CreateTechnicalServiceDto.City)" Immediate="true" Label="Şehir" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="5" md="4">
+                    <MudTextField T="string" @bind-Value="CreateTechnicalServiceDto.District" For="@(() => CreateTechnicalServiceDto.District)" Immediate="true" Label="İlçe" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="CreateTechnicalServiceDto.Address" For="@(() => CreateTechnicalServiceDto.Address)" Immediate="true" Label="Açık Adres" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="3" FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="12" md="12" />
+
+                <MudItem xs="12" sm="5" md="4">
+                    <MudNumericField T="double" @bind-Value="CreateTechnicalServiceDto.Lat" For="@(() => CreateTechnicalServiceDto.Lat)" Immediate="true" Label="Enlem (Latitude)" Variant="Variant.Outlined" Margin="Margin.Dense" Format="F6" />
+                </MudItem>
+                <MudItem xs="12" sm="5" md="4">
+                    <MudNumericField T="double" @bind-Value="CreateTechnicalServiceDto.Lng" For="@(() => CreateTechnicalServiceDto.Lng)" Immediate="true" Label="Boylam (Longitude)" Variant="Variant.Outlined" Margin="Margin.Dense" Format="F6" />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="CreateTechnicalServiceDto.PostalCode" For="@(() => CreateTechnicalServiceDto.PostalCode)" Immediate="true" Label="Posta Kodu" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack" Color="Color.Default" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ArrowBack" Class="px-6">Geri</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Save" OnClick="Submit" Disabled="@IsSubmitting" Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Kaydet</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Kaydediliyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Teknik servis oluşturuluyor..." />
+    }
+</MudPaper>

@@ -1,0 +1,21 @@
+﻿<MudStack Spacing="0">
+    <MudText Typo="Typo.overline" Class="mud-text-secondary">@Label</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudIcon Icon="@Icon" Color="@IconColor" Class="mr-2" />
+        @if (!string.IsNullOrWhiteSpace(Value))
+        {
+            <MudText Typo="Typo.body1">@Value</MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.body1" Class="text-grey-lighten-1"><i>---</i></MudText>
+        }
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Label { get; set; }
+    [Parameter] public string Value { get; set; }
+    [Parameter] public Color IconColor { get; set; } = Color.Primary;
+}

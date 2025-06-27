@@ -1,0 +1,44 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@ContentIcon" Color="@GeneralColor" Class="mb-n1 mx-2" />
+            @Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>@Content</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel"
+                   Color="@GeneralColor"
+                   Variant="Variant.Filled">
+            Tamam
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Content { get; set; }
+    [Parameter] public string ContentIcon { get; set; }
+    [Parameter] public Color GeneralColor { get; set; }
+
+    private void Cancel() => MudDialog.Close(DialogResult.Ok(true));
+
+    protected override void OnInitialized()
+    {
+        DialogStyles();
+    }
+
+    private Task DialogStyles()
+    {
+        var options = MudDialog.Options with
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+            };
+        return MudDialog.SetOptionsAsync(options);
+    }
+}
+

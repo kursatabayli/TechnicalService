@@ -1,0 +1,94 @@
+﻿@page "/operational/my-service-records/"
+@layout OperationalStaffLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.OperationalStaff))]
+@using TechnicalService.DTOs.DTOs.ServiceRecordDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.OperationalStaff.Constants
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Servis Kayıtları</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCheck" Class="mr-3" Color="Color.Primary" />
+        Servis Kayıtları
+    </MudText>
+
+    <SearchServiceRecordButton />
+
+</MudItem>
+<MudTable Items="@FilteredServiceRecords"
+          Hover="true"
+          FixedHeader="true"
+          Loading="@_isLoading"
+          LoadingProgressColor="Color.Primary"
+          Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchText"
+                      Placeholder="Takip No, Müşteri veya Seri No ile ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<ServiceRecordListDto, object>(x => x.Id)">Takip No</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ServiceRecordListDto, object>(x => x.UserFullName)">Müşteri</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ServiceRecordListDto, object>(x => x.Title)">Başlık</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ServiceRecordListDto, object>(x => x.SerialNumber)">Seri Numarası</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ServiceRecordListDto, object>(x => x.Status)">Durum</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ServiceRecordListDto, object>(x => x.CreatedDate)">Kayıt Tarihi</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </LoadingContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Takip No">
+            <MudText Typo="Typo.body2" Style="font-family: monospace;">@context.Id.ToString().Substring(0, 8).ToUpper()</MudText>
+        </MudTd>
+        <MudTd DataLabel="Müşteri">@context.UserFullName</MudTd>
+        <MudTd DataLabel="Başlık">@context.Title</MudTd>
+        <MudTd DataLabel="Seri Numarası">@context.SerialNumber</MudTd>
+        <MudTd DataLabel="Durum">
+            <MudChip T="ServiceStatusDto" Color="@GetStatusColor(context.Status)" Size="Size.Small">@context.Status.GetDescription()</MudChip>
+        </MudTd>
+        <MudTd DataLabel="Kayıt Tarihi">@context.CreatedDate.ToString("dd.MM.yyyy HH:mm")</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Pageview"
+                           Color="Color.Primary"
+                           Size="Size.Medium"
+                           Title="Detayları Görüntüle"
+                           OnClick="() => NavigateToPage(string.Format(OperationalStaffRouteConstants.ServiceRecordDetail, context.Id))" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (_serviceRecords?.Any() == true && !string.IsNullOrEmpty(_searchText))
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@_searchText" ile eşleşen servis kaydı bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCheck" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Kayıtlı servis kaydı bulunmamaktadır.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredServiceRecords != null && FilteredServiceRecords.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>

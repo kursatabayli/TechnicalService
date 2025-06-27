@@ -1,0 +1,74 @@
+﻿@page "/managment/personnel-detail/{Id:guid}"
+@layout ManagmentLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.ManagementAccess))]
+@using TechnicalService.DTOs.DTOs.PersonnelDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.Managment.Constants
+@using TechnicalService.DTOs.DTOs.ServiceRecordDTOs
+@using TechnicalService.Shared.Extensions
+
+@if (_isLoading)
+{
+    <MudGrid Class="d-flex justify-center align-center" Style="height: 80vh;">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+        <MudText Class="ml-4">Personel bilgileri yükleniyor...</MudText>
+    </MudGrid>
+}
+else if (_personnel != null)
+{
+    <MudGrid Spacing="3">
+        <MudItem xs="12">
+            <MudItem class="d-flex align-center gap-4 mb-2">
+                <MudText Typo="Typo.h4">@_personnel.Name @_personnel.Surname</MudText>
+                <MudChip T="PersonnelStatusDto" Label="true"
+                         Color="@GetStatusColor(_personnel.PersonnelStatus)"
+                         Variant="Variant.Filled">
+                    @_personnel.PersonnelStatus.GetDescription()
+                </MudChip>
+            </MudItem>
+            <MudText Typo="Typo.h6" Color="Color.Secondary">@_personnel.Role.GetDescription()</MudText>
+            <MudDivider Class="my-3" />
+        </MudItem>
+
+        <MudItem xs="12" lg="6">
+            <MudPaper Outlined="true" Class="pa-4 rounded-lg" Style="height:100%;">
+                <MudText Typo="Typo.h6" GutterBottom="true">Kişisel Bilgiler</MudText>
+                <MudStack Row="false" Spacing="3">
+                    <MudItem xs="12" sm="6"><InfoItem Label="Kimlik Numarası" Icon="@Icons.Material.Filled.Fingerprint" Value="@_personnel.IdentityNumber" /></MudItem>
+                    <MudItem xs="12" sm="6"><InfoItem Label="Doğum Tarihi" Icon="@Icons.Material.Filled.Cake" Value="@(_personnel.BirthDate?.ToShortDateString())" /></MudItem>
+                    <MudItem xs="12" sm="6"><InfoItem Label="Cinsiyet" Icon="@GetGenderIcon(_personnel.Gender ?? default)" Value="@_personnel.Gender?.GetDescription()" /></MudItem>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" lg="6">
+            <MudPaper Outlined="true" Class="pa-4 rounded-lg" Style="height:100%;">
+                <MudText Typo="Typo.h6" GutterBottom="true">İletişim Bilgileri</MudText>
+                <MudGrid Spacing="3">
+                    <MudItem xs="12"><InfoItem Label="Telefon Numarası" Icon="@Icons.Material.Filled.Phone" Value="@_personnel.PhoneNumber" /></MudItem>
+                    <MudItem xs="12"><InfoItem Label="E-posta Adresi" Icon="@Icons.Material.Filled.Email" Value="@_personnel.Email" /></MudItem>
+                    <MudItem xs="12"><InfoItem Label="Adres" Icon="@Icons.Material.Filled.LocationOn" Value="@_personnel.Address" /></MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudPaper Outlined="true" Class="pa-4 rounded-lg">
+                <MudText Typo="Typo.h6" GutterBottom="true">İstihdam Bilgileri</MudText>
+                <MudGrid Spacing="3">
+                    <MudItem xs="12" sm="6" md="4"><InfoItem Label="Kurum E-postası" Icon="@Icons.Material.Filled.BusinessCenter" Value="@_personnel.InternalEmail" /></MudItem>
+                    <MudItem xs="12" sm="6" md="4"><InfoItem Label="Bağlı Olduğu Servis" Icon="@Icons.Material.Filled.HomeRepairService" Value="@_personnel.ServiceName" /></MudItem>
+                    <MudItem xs="12" sm="6" md="4"><InfoItem Label="İşe Başlama Tarihi" Icon="@Icons.Material.Filled.EventAvailable" Value="@(_personnel.HireDate?.ToShortDateString())" /></MudItem>
+                    @if (_personnel.TerminationDate.HasValue)
+                    {
+                        <MudItem xs="12" sm="6" md="4"><InfoItem Label="İşten Ayrılma Tarihi" Icon="@Icons.Material.Filled.EventBusy" Value="@_personnel.TerminationDate.Value.ToShortDateString()" IconColor="Color.Error" /></MudItem>
+                    }
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">Personel bilgileri bulunamadı.</MudAlert>
+}

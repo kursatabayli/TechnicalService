@@ -1,0 +1,89 @@
+﻿@page "/admin/products"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.ProductDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.Admin.Constants
+
+<PageTitle>Ürünler</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Inventory2" Class="mr-3" Color="Color.Primary" />
+        Ürünler
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="() => NavigateToPage(AdminRouteConstants.AdminCreateProducts)">
+        Yeni Ürün Ekle
+    </MudButton>
+</MudItem>
+
+<MudTable Items="@FilteredProducts" Hover="true" FixedHeader="true" Loading="@_isLoading" LoadingProgressColor="Color.Primary" Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchText"
+                      Placeholder="Ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ProductDto, object>(x => ProductDto.IndexOf(x))">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ProductDto, object>(x => x.BrandName)">Marka</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ProductDto, object>(x => x.ProductName)">Model</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ProductDto, object>(x => x.Type)">Ürün Türü</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </LoadingContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="#">@(ProductDto.IndexOf(context) + 1)</MudTd>
+        <MudTd DataLabel="Marka">@context.BrandName</MudTd>
+        <MudTd DataLabel="Model">@context.ProductName</MudTd>
+        <MudTd DataLabel="Ürün Türü">@context.Type</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           Class="mr-2"
+                           OnClick="() => NavigateToPage(string.Format(AdminRouteConstants.AdminUpdateProduct, context.Id))" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           OnClick="() => ShowDeleteConfirmationDialogAsync(context)" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (ProductDto?.Any() == true && !string.IsNullOrEmpty(SearchText))
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@SearchText" ile eşleşen ürün bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Inventory2" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Kayıtlı ürün bulunmamaktadır.</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">Yukarıdaki "Yeni Ürün Ekle" butonu ile yeni bir ürün oluşturabilirsiniz.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredProducts != null && FilteredProducts.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>

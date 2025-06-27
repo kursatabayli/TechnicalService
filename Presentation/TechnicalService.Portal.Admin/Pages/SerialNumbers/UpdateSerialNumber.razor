@@ -1,0 +1,128 @@
+﻿@page "/admin/update-serial-number/{Id:int}"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.ProductDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.DTOs.DTOs.SerialNumberDTOs
+
+<PageTitle>Seri Numarası Güncelle</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (UpdateSerialNumberDto == null && IsSubmitting)
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Seri numarası bilgileri yükleniyor...</MudText>
+            </MudItem>
+        </MudGrid>
+    }
+    else if (UpdateSerialNumberDto != null && !IsSubmitting)
+    {
+        <MudForm Model="@UpdateSerialNumberDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.EditNote" Class="mr-2" />
+                        Seri Numarası Güncelle
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Seri numarası bilgilerini düzenleyebilirsiniz: (@UpdateSerialNumberDto.Serial_Number)
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string"
+                                  @bind-Value="UpdateSerialNumberDto.Serial_Number"
+                                  For="@(() => UpdateSerialNumberDto.Serial_Number)"
+                                  Immediate="true"
+                                  Label="Seri Numarası"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.DriveFileRenameOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudAutocomplete T="ProductDto"
+                                     @bind-Value="UpdateSerialNumberDto.Product"
+                                     SearchFunc="SearchProducts"
+                                     ToStringFunc="@(p => $"{p.BrandName} - {p.Type} - {p.ProductName}" ?? string.Empty)"
+                                     For="@(() => UpdateSerialNumberDto.Product)"
+                                     Immediate="true"
+                                     Label="Ürün"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.Widgets"
+                                     AdornmentColor="Color.Primary"
+                                     ResetValueOnEmptyText="true"
+                                     Dense="true"
+                                     Clearable
+                                     FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudDatePicker Label="Kayıt Tarihi"
+                                   @bind-Date="UpdateSerialNumberDto.RegisterDate"
+                                   For="@(() => UpdateSerialNumberDto.RegisterDate)"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   Adornment="Adornment.Start"
+                                   AdornmentIcon="@Icons.Material.Filled.Event"
+                                   AdornmentColor="Color.Primary"
+                                   DateFormat="dd.MM.yyyy"
+                                   Editable="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6">
+                    Geri
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.SaveAs"
+                           OnClick="Submit"
+                           Disabled="@IsSubmitting"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Güncelle</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Güncelleniyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else if (IsSubmitting)
+    {
+        <Loading LoadingText="Seri numarası güncelleniyor..." />
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Seri numarası bulunamadı.</MudText>
+                <MudButton OnClick="NavigateBack" Variant="Variant.Text" Color="Color.Primary" Class="mt-4">Geri Dön</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>

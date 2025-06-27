@@ -1,0 +1,58 @@
+﻿@attribute [Authorize(Policy = nameof(AppPolicies.OperationalStaff))]
+@using TechnicalService.DTOs.Enums
+
+<AuthorizeView>
+    <MudDialog>
+        <DialogContent>
+            <MudGrid Class="pa-4" Spacing="4">
+                @if (!IsSubmitting)
+                {
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h6" Class="d-flex align-center mb-4" Color="Color.Primary">
+                            <MudIcon Icon="@Icons.Material.Filled.AddCircle" Class="mr-2" />
+                            Yeni Servis Adımı Ekle
+                        </MudText>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudForm Model="AddServiceRecordStepDto" @ref="form" Validation="@(Validator.ValidateValue)" ValidationDelay="0" @onsubmit="Submit">
+                            <MudTextField Label="Başlık"
+                                          @bind-Value="AddServiceRecordStepDto.StepTitle"
+                                          Variant="Variant.Outlined"
+                                          Immediate="true"
+                                          For="@(() => AddServiceRecordStepDto.StepTitle)"
+                                          Clearable
+                                          AdornmentIcon="@Icons.Material.Filled.Title"
+                                          Class="mb-4" />
+
+                            <MudTextField Label="Açıklama"
+                                          @bind-Value="AddServiceRecordStepDto.StepDescription"
+                                          Variant="Variant.Outlined"
+                                          Immediate="true"
+                                          For="@(() => AddServiceRecordStepDto.StepDescription)"
+                                          Clearable
+                                          AdornmentIcon="@Icons.Material.Filled.Description"
+                                          Class="mb-4" />
+
+                            <MudCheckBox T="bool" @bind-Value="AddServiceRecordStepDto.IsCompleted" Color="Color.Primary" Label="Bu adım tamamlandı mı?" />
+                        </MudForm>
+                    </MudItem>
+                }
+                else
+                {
+                    <MudItem xs="12" Class="text-center py-8">
+                        <Loading />
+                    </MudItem>
+                }
+            </MudGrid>
+        </DialogContent>
+
+        <DialogActions>
+            @if (!IsSubmitting)
+            {
+                <MudButton OnClick="Cancel" Variant="Variant.Text">İptal</MudButton>
+                <MudButton OnClick="Submit" Color="Color.Primary" Variant="Variant.Filled">Kaydet</MudButton>
+            }
+        </DialogActions>
+    </MudDialog>
+</AuthorizeView>

@@ -1,0 +1,68 @@
+﻿@page "/admin/service-record-detail/{Id:guid}"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.ServiceRecordDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+@using TechnicalService.Portal.Admin.Pages.ServiceRecords.ServiceRecordDetailHelpers
+
+<PageTitle>Servis Detayı</PageTitle>
+
+@if (_isLoading)
+{
+    <MudGrid class="d-flex justify-center align-center" style="height: 80vh;">
+        <Loading />
+    </MudGrid>
+}
+else if (_serviceRecordDto != null)
+{
+    <MudGrid>
+        <MudItem xs="12" lg="8">
+            <MudStack Spacing="4">
+                <MudPaper Class="pa-4 rounded-lg" Elevation="3">
+                    <MudGrid class="d-flex justify-space-between align-start">
+                        <MudItem>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-1">
+                                <MudText Typo="Typo.h5" Class="font-weight-bold">@_serviceRecordDto.Title</MudText>
+                                <MudChip T="string" Color="@GetStatusColor(_serviceRecordDto.Status)" Variant="Variant.Filled" Label="true">@_serviceRecordDto.Status.GetDescription()</MudChip>
+                            </MudStack>
+
+                            <MudText Typo="Typo.caption" Color="Color.Inherit">
+                                Takip No: @_serviceRecordDto.Id.ToString().Substring(0, 8).ToUpper() &bull;
+                                Kayıt Tarihi: @_serviceRecordDto.CreatedDate.ToString("dd MMMM yyyy, HH:mm")
+                            </MudText>
+                            @if (!string.IsNullOrEmpty(@_serviceRecordDto.PersonnelName))
+                            {
+                                <br />
+                                <MudText Typo="Typo.caption" Color="Color.Inherit">
+                                    Atanan Personel: @_serviceRecordDto.PersonnelName
+                                </MudText>
+                            }
+                        </MudItem>
+                        <MudItem class="d-flex gap-2">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"OnClick="OpenServiceRecordUpdateDialogAsync">Kaydı Güncelle</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddServiceStepDialogAsync">Yeni Adım Ekle</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                    <MudDivider Class="my-4" />
+                    <MudText Typo="Typo.h6">Müşteri Şikayeti</MudText>
+                    <MudText Typo="Typo.body1">@_serviceRecordDto.Description</MudText>
+                </MudPaper>
+                <CascadingValue Value="this">
+                    <ServiceRecordSteps ServiceRecordStepsDto="_serviceRecordSteps" IsComplete="@(!_serviceRecordDto.IsCompleted)" />
+                </CascadingValue>
+            </MudStack>
+        </MudItem>
+
+        <MudItem xs="12" lg="4">
+            <MudStack Spacing="4">
+                <UserDetail User="_userDetailDto" />
+                <UserProductDetail UserProduct="_userProductDto" />
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Error">Servis kaydı bulunamadı.</MudAlert>
+}

@@ -1,0 +1,14 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6" Color="Color.Error" Class="mb-4 d-flex align-items-center">
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Class="mr-2" />
+            @Title
+        </MudText>
+        <MudText>@Content</MudText>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">İptal</MudButton>
+        <MudButton OnClick="Submit" Color="Color.Error" Variant="Variant.Filled">@SubmitButtonText</MudButton>
+    </DialogActions>
+</MudDialog>

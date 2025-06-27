@@ -1,0 +1,22 @@
+﻿@using TechnicalService.DTOs.Enums
+
+<AuthorizeView Policy="@nameof(AppPolicies.CustomerServiceAccesses)">
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Search"
+               OnClick="OpenServiceRecordSearchDialogAsync">
+        Servis Kaydı Ara
+    </MudButton>
+</AuthorizeView>
+
+@code{
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    private async Task OpenServiceRecordSearchDialogAsync()
+    {
+        var parameters = new DialogParameters<SearchServiceRecord>();
+
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<SearchServiceRecord>("Servis Kaydı Ara", options);
+        var result = await dialog.Result;
+    }
+}

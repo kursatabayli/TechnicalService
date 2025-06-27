@@ -1,0 +1,116 @@
+﻿@page "/create-service-record"
+@attribute [Authorize(Policy = nameof(AppPolicies.UserAccesses))]
+
+@using TechnicalService.DTOs.DTOs.UserProductDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.UserUI.Constants
+
+
+<PageTitle>Servis Kaydı Oluştur</PageTitle>
+<MudPaper Class="form-container" Elevation="3">
+    @if (!IsSubmitting)
+    {
+        <MudForm Model="@dto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Build" Class="mr-2" />
+                        Yeni Servis Kaydı Oluştur
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen ilgili alanları eksiksiz doldurunuz.
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudAutocomplete T="UserProductDto" @bind-Value="@dto.UserProduct"
+                                     SearchFunc="SearchProduct"
+                                     ToStringFunc="@(p => p == null ? string.Empty : $"{p.ProductName} - {p.Serial_Number}")"
+                                     Label="Servis Kaydı Yapılacak Ürün"
+                                     Margin="Margin.Dense"
+                                     Variant="Variant.Outlined"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.DevicesOther"
+                                     AdornmentColor="Color.Primary"
+                                     ResetValueOnEmptyText="true"
+                                     Immediate="true"
+                                     Dense="true"
+                                     Clearable="true"
+                                     For="@(() => dto.UserProduct)"
+                                     FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Title"
+                                  Label="Konu Başlığı"
+                                  Placeholder="Örn: Ekranda görüntü yok, Cihaz açılmıyor vb."
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.LabelImportant"
+                                  AdornmentColor="Color.Primary"
+                                  For="@(() => dto.Title)"
+                                  Immediate="true"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Description"
+                                  Label="Sorunun Detaylı Açıklaması"
+                                  Placeholder="Lütfen yaşadığınız sorunu ve talebinizi detaylı bir şekilde açıklayınız."
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Text"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Comment"
+                                  AdornmentColor="Color.Primary"
+                                  Lines="4"
+                                  AutoGrow
+                                  For="@(() => dto.Description)"
+                                  Immediate="true"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="() => NavigatePage(UserRouteConstants.ServiceRecords)"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6">
+                    Geri
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           OnClick="Submit"
+                           Disabled="@IsSubmitting"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Oluştur</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Oluşturuluyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Servis kaydınız oluşturuluyor..." />
+    }
+</MudPaper>

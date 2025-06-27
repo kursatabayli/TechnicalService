@@ -1,0 +1,100 @@
+﻿@page "/admin/update-technical-service/{Id:int}"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.TechnicalServiceDTOs
+@using TechnicalService.DTOs.Enums
+
+<PageTitle>Teknik Servis Güncelle</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (UpdateTechnicalServiceDto == null && IsSubmitting)
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Teknik servis bilgileri yükleniyor...</MudText>
+            </MudItem>
+        </MudGrid>
+    }
+    else if (UpdateTechnicalServiceDto != null && !IsSubmitting)
+    {
+        <MudForm Model="@UpdateTechnicalServiceDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.EditLocationAlt" Class="mr-2" />
+                        Teknik Servis Güncelle
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Teknik servis bilgilerini düzenleyebilirsiniz: (@UpdateTechnicalServiceDto.ServiceName)
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="UpdateTechnicalServiceDto.ServiceName" For="@(() => UpdateTechnicalServiceDto.ServiceName)" Immediate="true" Label="Servis Adı" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Store" AdornmentColor="Color.Primary" Clearable FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="UpdateTechnicalServiceDto.Phone" For="@(() => UpdateTechnicalServiceDto.Phone)" Immediate="true" Label="Telefon Numarası" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" AdornmentColor="Color.Primary" Mask="@(new PatternMask("0(000) 000 00 00"))" FullWidth />
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12" />
+
+                <MudItem xs="12" sm="5" md="4">
+                    <MudTextField T="string" @bind-Value="UpdateTechnicalServiceDto.City" For="@(() => UpdateTechnicalServiceDto.City)" Immediate="true" Label="Şehir" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" sm="5" md="4">
+                    <MudTextField T="string" @bind-Value="UpdateTechnicalServiceDto.District" For="@(() => UpdateTechnicalServiceDto.District)" Immediate="true" Label="İlçe" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="UpdateTechnicalServiceDto.Address" For="@(() => UpdateTechnicalServiceDto.Address)" Immediate="true" Label="Açık Adres" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="3" FullWidth />
+                </MudItem>
+                
+                <MudItem xs="12" sm="12" md="12" />
+
+                <MudItem xs="12" sm="5" md="4">
+                    <MudNumericField T="double" @bind-Value="UpdateTechnicalServiceDto.Lat" Min="-90" Max="90" For="@(() => UpdateTechnicalServiceDto.Lat)" Immediate="true" Label="Enlem (Latitude)" Variant="Variant.Outlined" Margin="Margin.Dense" Format="F6" />
+                </MudItem>
+                 <MudItem xs="12" sm="5" md="4">
+                    <MudNumericField T="double" @bind-Value="UpdateTechnicalServiceDto.Lng" Min="-180" Max="180" For="@(() => UpdateTechnicalServiceDto.Lng)" Immediate="true" Label="Boylam (Longitude)" Variant="Variant.Outlined" Margin="Margin.Dense" Format="F6" />
+                </MudItem>
+
+                 <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string" @bind-Value="UpdateTechnicalServiceDto.PostalCode" For="@(() => UpdateTechnicalServiceDto.PostalCode)" Immediate="true" Label="Posta Kodu" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack" Color="Color.Default" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ArrowBack" Class="px-6">Geri</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.SaveAs" OnClick="Submit" Disabled="@IsSubmitting" Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Güncelle</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Güncelleniyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else if (IsSubmitting)
+    {
+        <Loading LoadingText="Teknik servis güncelleniyor..." />
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Teknik servis bulunamadı.</MudText>
+                <MudButton OnClick="NavigateBack" Variant="Variant.Text" Color="Color.Primary" Class="mt-4">Geri Dön</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>

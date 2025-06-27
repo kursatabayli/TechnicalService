@@ -1,0 +1,96 @@
+﻿@page "/admin/serial-numbers"
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@layout AdminLayout
+@using TechnicalService.DTOs.DTOs.SerialNumberDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.Admin.Constants
+
+<PageTitle>Seri Numaraları</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Class="mr-3" Color="Color.Primary" />
+        Seri Numaraları
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="() => NavigateToPage(AdminRouteConstants.AdminCreateSerialNumbers)">
+        Yeni Seri Numarası Ekle
+    </MudButton>
+</MudItem>
+
+<MudTable Items="@FilteredSerialNumbers"
+          Hover="true"
+          FixedHeader="true"
+          Loading="@_isLoading"
+          LoadingProgressColor="Color.Primary"
+          Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchText"
+                      Placeholder="Seri numarası, marka veya ürün adıyla ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<SerialNumberDto, object>(x => _serialNumbers.IndexOf(x))">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SerialNumberDto, object>(x => x.Serial_Number)">Seri Numarası</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SerialNumberDto, object>(x => x.BrandName)">Marka</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SerialNumberDto, object>(x => x.ProductName)">Ürün Adı</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SerialNumberDto, object>(x => x.RegisterDate)">Kayıt Tarihi</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <LoadingContent>
+        <Loading />
+    </LoadingContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="#">@(_serialNumbers.IndexOf(context) + 1)</MudTd>
+        <MudTd DataLabel="Seri Numarası">@context.Serial_Number</MudTd>
+        <MudTd DataLabel="Marka">@context.BrandName</MudTd>
+        <MudTd DataLabel="Ürün Adı">@context.ProductName</MudTd>
+        <MudTd DataLabel="Kayıt Tarihi">@context.RegisterDate.ToShortDateString()</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           Class="mr-2"
+                           OnClick='() => NavigateToPage(string.Format(AdminRouteConstants.AdminUpdateSerialNumbers, context.Id))' />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           OnClick="@(() => ShowDeleteConfirmationDialogAsync(context))" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (_serialNumbers?.Any() == true && !string.IsNullOrEmpty(_searchText))
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@_searchText" ile eşleşen seri numarası bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Kayıtlı seri numarası bulunmamaktadır.</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">Yukarıdaki "Yeni Seri Numarası Ekle" butonu ile yeni bir kayıt oluşturabilirsiniz.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredSerialNumbers != null && FilteredSerialNumbers.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>

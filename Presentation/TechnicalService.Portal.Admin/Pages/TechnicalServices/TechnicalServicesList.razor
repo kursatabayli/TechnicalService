@@ -1,0 +1,102 @@
+﻿@page "/admin/technical-services"
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@layout AdminLayout
+@using TechnicalService.DTOs.DTOs.TechnicalServiceDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.Admin.Constants
+
+<PageTitle>Teknik Servisler</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Store" Class="mr-3" Color="Color.Primary" />
+        Teknik Servisler
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="() => NavigateToPage(AdminRouteConstants.AdminCreateTechnicalService)">
+        Yeni Teknik Servis Ekle
+    </MudButton>
+</MudItem>
+
+<MudExpansionPanels MultiExpansion="true" Class="mb-4">
+    <MudExpansionPanel Text="Haritayı Göster/Gizle" Expanded="true">
+        <MudPaper Elevation="5" Class="rounded-lg overflow-hidden" Style="height: 50vh;">
+            <MudItem id="mapContainer" style="height: 100%; width: 100%;"></MudItem>
+        </MudPaper>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+<MudTable Items="@FilteredTechnicalServices"
+          Hover="true"
+          FixedHeader="true"
+          Loading="@_isLoading"
+          LoadingProgressColor="Color.Primary"
+          Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchText"
+                      Placeholder="Servis adı, şehir veya ilçe ile ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TechnicalServiceDto, object>(x => _technicalServices.IndexOf(x))">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TechnicalServiceDto, object>(x => x.ServiceName)">Servis Adı</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TechnicalServiceDto, object>(x => x.City)">Adres</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TechnicalServiceDto, object>(x => x.Phone)">Telefon</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <LoadingContent>
+        <Loading />
+    </LoadingContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="#">@(_technicalServices.IndexOf(context) + 1)</MudTd>
+        <MudTd DataLabel="Servis Adı">@context.ServiceName</MudTd>
+        <MudTd DataLabel="Adres">@($"{context.Address}, {context.PostalCode} {context.District}/{context.City}")</MudTd>
+        <MudTd DataLabel="Telefon">@context.Phone</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           Class="mr-2"
+                           OnClick='() => NavigateToPage(string.Format(AdminRouteConstants.AdminUpdateTechnicalService, context.Id))' />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           OnClick="@(() => ShowDeleteConfirmationDialogAsync(context))" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (_technicalServices?.Any() == true && !string.IsNullOrEmpty(_searchText))
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@_searchText" ile eşleşen teknik servis bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Store" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Kayıtlı teknik servis bulunmamaktadır.</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">Yukarıdaki "Yeni Teknik Servis Ekle" butonu ile yeni bir kayıt oluşturabilirsiniz.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredTechnicalServices != null && FilteredTechnicalServices.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>

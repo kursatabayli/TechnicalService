@@ -1,0 +1,15 @@
+﻿namespace TechnicalService.DTOs.DTOs.ServiceRecordStepDTOs
+{
+    public class ServiceRecordStepDto
+    {
+        public int Id { get; set; }
+        public Guid ServiceRecordId { get; set; }
+        public string StepTitle { get; set; }
+        public string StepDescription { get; set; }
+        public int Order { get; set; }
+        public bool IsCompleted { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
+        public string? PersonnelFullName { get; set; }
+    }
+}

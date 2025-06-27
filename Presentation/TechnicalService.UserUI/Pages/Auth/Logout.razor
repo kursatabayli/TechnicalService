@@ -1,0 +1,29 @@
+﻿@page "/logout"
+@using TechnicalService.Shared.AuthHelpers
+@using TechnicalService.Shared.Constants
+@using TechnicalService.Shared.Services.Contracts
+@attribute [Authorize]
+
+
+@code{
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private CustomAuthStateProvider AuthStateProvider { get; set; }
+    [Inject] private IAuthService AuthService { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await AuthService.LogoutAsync(Endpoints.UserLogout, ClientTypes.UserAuthClient);
+
+            if (response.IsSuccess)
+            {
+                AuthStateProvider.NotifyUserLoggedOut();
+                NavigationManager.NavigateTo("/login", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Logout error: {ex.Message}");
+        }
+    }
+}

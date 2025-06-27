@@ -1,0 +1,18 @@
+﻿<MudDrawer Open="@UIStateOption.drawerOpen"
+           OpenChanged="@HandleDrawerOpenChanged"
+           Breakpoint="Breakpoint.Sm"
+           Variant="DrawerVariant.Mini"
+           ClipMode="DrawerClipMode.Always"
+           Elevation="2">
+    <MudNavMenu Rounded="UIStateOption.drawerOpen"
+                Class="@(UIStateOption.drawerOpen ? "pa-2" : null )"
+                Margin="@(UIStateOption.drawerOpen ? Margin.Normal : Margin.None )"
+                Bordered="!UIStateOption.drawerOpen">
+        <MudNavLink Href="operational/my-service-records/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.PlaylistAddCheck">Servis Kayıtlarım</MudNavLink>
+        <MudNavLink Href="operational/profile/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AccountCircle">Profil</MudNavLink>
+
+        <MudNavLink Href="logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" Class="mt-auto" ForceLoad="true">
+            <MudText Color="Color.Error">Çıkış Yap</MudText>
+        </MudNavLink>
+    </MudNavMenu>
+</MudDrawer>

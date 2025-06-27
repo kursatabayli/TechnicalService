@@ -1,0 +1,127 @@
+﻿@page "/my-service-records/"
+@attribute [Authorize(Policy = nameof(AppPolicies.UserAccesses))]
+
+@using TechnicalService.DTOs.DTOs.ServiceRecordDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+@using TechnicalService.UserUI.Constants
+
+<PageTitle>Servis Kayıtlarım</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Handyman" Class="mr-3" Color="Color.Primary" />
+        Servis Kayıtlarım
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick='() => NavigatePage(UserRouteConstants.CreateServiceRecord)'>
+        Yeni Servis Kaydı
+    </MudButton>
+</MudItem>
+
+
+<MudTable Loading="LoadingData" LoadingProgressColor="Color.Primary" Items="@FilteredRequests" Hover="true" FixedHeader="true" Dense="false">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchText"
+                      Placeholder="Ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>#</MudTh>
+        <MudTh>Takip No</MudTh>
+        <MudTh>Ürün Bilgileri</MudTh>
+        <MudTh>Oluşturma Tarihi</MudTh>
+        <MudTh>Tamamlanma Tarihi</MudTh>
+        <MudTh>Durum</MudTh>
+        <MudTh>Servis Detayı</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@(dto.IndexOf(context) + 1)</MudTd>
+        <MudTd>@context.Id.ToString().Substring(0, 8).ToUpper()</MudTd>
+
+        <MudTd>
+            <MudItem class="d-flex flex-column">
+                <MudText Typo="Typo.subtitle1">@context.ProductName</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">SN: @context.Serial_Number</MudText>
+            </MudItem>
+        </MudTd>
+
+        <MudTd>
+            <MudItem class="d-flex flex-column">
+                <MudText>@context.CreatedDate.ToString("dd MMM yyyy")</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                    @context.CreatedDate.ToString("HH:mm")
+                </MudText>
+            </MudItem>
+        </MudTd>
+
+        <MudTd>
+            @if (context.CompletedDate.HasValue)
+            {
+                <MudItem class="d-flex flex-column">
+                    <MudText>@context.CompletedDate.Value.ToString("dd MMM yyyy")</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                        @context.CompletedDate.Value.ToString("HH:mm")
+                    </MudText>
+                </MudItem>
+            }
+            else
+            {
+                <MudText Color="Color.Tertiary">&mdash;</MudText>
+            }
+        </MudTd>
+
+        <MudTd>
+            <MudChip T="ServiceRecordDto" Class="status-chip"
+                     Color="@GetStatusColor(context.Status)"
+                     Variant="Variant.Filled">
+                @context.Status.GetDescription()
+            </MudChip>
+        </MudTd>
+
+
+
+        <MudTd>
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Primary"
+                       EndIcon="@Icons.Material.Filled.Visibility"
+                       OnClick="() => NavigatePage(string.Format(UserRouteConstants.ServiceRecordStatus, context.Id))">
+                Detaylar
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (dto?.Any() == true)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" />
+                <MudItem>"@SearchText" ile bir kayıt bulunamadı</MudItem>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Inventory2" Class="mb-2" />
+                <MudItem>Tamir kaydı bulunmamaktadır</MudItem>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredRequests.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item}" />
+        }
+    </PagerContent>
+</MudTable>
+

@@ -1,0 +1,88 @@
+﻿@using TechnicalService.DTOs.Response
+@using TechnicalService.DTOs.Results
+@using TechnicalService.Shared.Constants
+@using TechnicalService.Shared.Services.Contracts
+@attribute [AllowAnonymous]
+
+<MudAlert Severity="Severity.Warning" Class="mb-4">
+    <b>E-posta Doğrulanmamış!</b>
+    <MudText Class="mt-2">Hesabınızı aktif etmek için e-postanıza gelen bağlantıya tıklayın.</MudText>
+    <MudGrid class="d-flex align-center mt-3">
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Primary"
+                   OnClick="ResendVerificationEmail"
+                   StartIcon="@Icons.Material.Filled.Email">
+            Bağlantıyı Yeniden Gönder
+        </MudButton>
+        <MudText Class="ml-2">veya</MudText>
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Primary"
+                   OnClick="CloseBanner"
+                   Class="ml-2">
+            Kapat
+        </MudButton>
+    </MudGrid>
+</MudAlert>
+
+@code {
+    private string _userEmail = string.Empty;
+    private bool _emailNotVerified = false;
+
+    [Parameter]
+    public string userEmail
+    {
+        get => _userEmail;
+        set
+        {
+            if (_userEmail != value)
+            {
+                _userEmail = value;
+                userEmailChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    [Parameter]
+    public bool emailNotVerified
+    {
+        get => _emailNotVerified;
+        set
+        {
+            if (_emailNotVerified != value)
+            {
+                _emailNotVerified = value;
+                emailNotVerifiedChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> userEmailChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> emailNotVerifiedChanged { get; set; }
+
+    [Inject] ISnackbar Snackbar { get; set; }
+    [Inject] private IDataService<Result> dataService { get; set; }
+
+    private async Task ResendVerificationEmail()
+    {
+
+        var result = await dataService.GetAsync(Endpoints.ResendEmail + userEmail, ClientTypes.UserPublicClient);
+
+        if (result.IsSuccess)
+        {
+            Snackbar.Add(result.StatusMessage, Severity.Success);
+            CloseBanner();
+        }
+        else
+        {
+            Snackbar.Add(result.StatusMessage, Severity.Error);
+        }
+    }
+
+    private void CloseBanner()
+    {
+        emailNotVerified = false;
+        StateHasChanged();
+    }
+}

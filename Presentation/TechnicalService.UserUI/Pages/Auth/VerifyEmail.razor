@@ -1,0 +1,63 @@
+﻿@page "/verify-email"
+@using Microsoft.AspNetCore.WebUtilities
+@using TechnicalService.DTOs.Response
+@using TechnicalService.DTOs.Results
+@using TechnicalService.Shared.Constants
+@using TechnicalService.Shared.Services.Contracts
+@attribute [AllowAnonymous]
+
+
+<PageTitle>E-Posta Doğrulama</PageTitle>
+
+@if (!Submitting)
+{
+
+}
+else
+{
+    <Loading LoadingText="Hesabınız Doğrulanıyor..." />
+}
+
+
+@code{
+
+    private bool Submitting { get; set; } = true;
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Inject] private IDataService<Result> dataService { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Parameter] public string Token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var queryParameters = QueryHelpers.ParseQuery(uri.Query);
+
+            if (queryParameters.TryGetValue("confirm", out var tokenValues))
+            {
+                var result = await dataService.GetAsync(Endpoints.VerifyEmail + tokenValues.First(), ClientTypes.UserPublicClient);
+
+                if (result.IsSuccess)
+                    Snackbar.Add(result.StatusMessage, Severity.Success);
+                else
+                    Snackbar.Add(result.StatusMessage, Severity.Error);
+            }
+            else
+            {
+                Snackbar.Add("Geçersiz Doğrulama Linki!", Severity.Error);
+            }
+            Submitting = false;
+
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Bir hata oluştu: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            await Task.Delay(3000);
+            NavigationManager.NavigateTo("/login", true);
+        }
+    }
+}

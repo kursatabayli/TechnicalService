@@ -1,0 +1,170 @@
+﻿@page "/register"
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+@attribute [AllowAnonymous]
+
+<PageTitle>Kayıt Ol</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+
+    @if (!Submitting)
+    {
+        <MudForm Model="dto" @ref="form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.PersonAdd" Class="mr-2" />
+                        Kullanıcı Kaydı
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Yeni bir hesap oluşturmak için lütfen bilgilerinizi giriniz.
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Name"
+                                  Label="Ad"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => dto.Name)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.PersonOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Surname"
+                                  Label="Soyad"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => dto.Surname)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.PersonOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.Email"
+                                  Label="E-posta"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Email"
+                                  For="@(() => dto.Email)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.AlternateEmail"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="dto.PhoneNumber"
+                                  Label="Telefon Numarası"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Telephone"
+                                  For="@(() => dto.PhoneNumber)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Phone"
+                                  AdornmentColor="Color.Primary"
+                                  Placeholder="5xxxxxxxxx"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <PasswordField Label="Şifre"
+                                   @bind-Password="dto.Password"
+                                   ValidationExpression="@(() => dto.Password)" />
+
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <PasswordField Label="Şifre Tekrar"
+                                   @bind-Password="dto.ApplyPassword"
+                                   ValidationExpression="@(() => dto.ApplyPassword)" />
+
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudDatePicker @bind-Date="dto.BirthDate"
+                                   Label="Doğum Tarihi"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   DateFormat="dd.MM.yyyy"
+                                   Adornment="Adornment.Start"
+                                   AdornmentIcon="@Icons.Material.Filled.Cake"
+                                   AdornmentColor="Color.Primary"
+                                   MinDate="@DateTime.Today.AddYears(-100)"
+                                   MaxDate="@DateTime.Today.AddYears(-16)"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   ShowToolbar="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudSelect @bind-Value="dto.Gender"
+                               T="GenderDto?"
+                               Label="Cinsiyet"
+                               For="@(() => dto.Gender)"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Adornment="Adornment.Start"
+                               AdornmentIcon="@(dto.Gender == GenderDto.Male ? Icons.Material.Filled.Male : dto.Gender == GenderDto.Female ? Icons.Material.Filled.Female : Icons.Material.Filled.Wc)"
+                               AdornmentColor="Color.Primary"
+                               FullWidth>
+                        @foreach (var gender in Enum.GetValues<GenderDto>())
+                        {
+                            <MudSelectItem T="GenderDto?" Value="@gender">@gender.GetDescription()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudCheckBox T="bool" Required="true" RequiredError="" @bind-Value="TermsOfService" Color="Color.Primary">
+                        <MudLink OnClick="ShowTermsOfServiceAsync">Kullanım Koşulları ve Üyelik Sözleşmesi</MudLink>'ni kabul ediyorum
+                    </MudCheckBox>
+                    <MudCheckBox T="bool" Required="true" RequiredError="" @bind-Value="PrivacyAndPdplPolicy" Color="Color.Primary">
+                        <MudLink OnClick="ShowPrivacyAndPdplPolicyAsync">Gizlilik Politikası ve KVKK Aydınlatma Metni</MudLink>'ni kabul ediyorum
+                    </MudCheckBox>
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="Submit"
+                           Disabled="@Submitting"
+                           StartIcon="@Icons.Material.Filled.PersonAdd"
+                           Class="px-6">
+                    @if (!Submitting)
+                    {
+                        <MudText>Kayıt Ol</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Kaydediliyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+
+            <MudGrid Justify="Justify.Center" Class="mt-3">
+                <MudItem xs="12" sm="10" md="8" Class="text-center">
+                    <MudLink Href="/login" Typo="Typo.body2">Hesabınız var mı? Giriş Yapın</MudLink>
+                </MudItem>
+            </MudGrid>
+
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Kaydınız oluşturuluyor..." />
+    }
+</MudPaper>

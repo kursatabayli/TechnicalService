@@ -1,0 +1,62 @@
+﻿<MudAppBar Elevation="1" Class="px-4" Dense="true">
+    <!-- Sol Taraf -->
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" >
+        <AuthorizeView>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                           Color="Color.Inherit"
+                           Edge="Edge.Start"
+                           Class="ml-n1"
+                           OnClick="@((e) => DrawerToggle())" />
+        </AuthorizeView>
+
+        <MudLink Href="/" Underline="Underline.None" Typo="Typo.h6" Class="font-weight-bold text-uppercase" Color="Color.Primary">
+            Teknik Servis App
+        </MudLink>
+    </MudStack>
+
+    <!-- Orta Kısım (Masaüstü Görünüm) -->
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4" Class="mx-auto">
+            <MudLink Href="/hizmetlerimiz" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.Hover">
+                Hizmetlerimiz
+            </MudLink>
+            <MudLink Href="/Locations" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.Hover">
+                Servislerimiz
+            </MudLink>
+            <MudLink Href="/Contact" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.Hover">
+                İletişim
+            </MudLink>
+            <MudLink Href="/hakkimizda" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.Hover">
+                Hakkımızda
+            </MudLink>
+            <MudLink Href="/sss" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.Hover">
+                S.S.S
+            </MudLink>
+        </MudStack>
+
+    <!-- Sağ Taraf -->
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <AuthorizeView>
+            <NotAuthorized>
+                <MudMenu Label="Giriş Yap/Üye Ol" Color="Color.Inherit" StartIcon="@Icons.Material.Filled.SupervisedUserCircle" Size="Size.Small">
+                    <MudMenuItem Href="/login"
+                                 Icon="@Icons.Material.Filled.Login"
+                                 Class="text-capitalize">
+                        Giriş Yap
+                    </MudMenuItem>
+                    <MudMenuItem Href="/register"
+                                 Icon="@Icons.Material.Filled.AppRegistration"
+                                 Class="text-capitalize">
+                        Üye Ol
+                    </MudMenuItem>
+                </MudMenu>
+            </NotAuthorized>
+        </AuthorizeView>
+
+        <MudToggleIconButton ToggledChanged="@((e) => DarkModeToggle())"
+                             Class="ml-2"
+                             Icon="@(UIStateOption.isDarkMode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.WbSunny)"
+                             Color="Color.Inherit"
+                             Title="@(UIStateOption.isDarkMode ? "Karanlık Mod" : "Aydınlık Mod")" />
+    </MudStack>
+
+</MudAppBar>

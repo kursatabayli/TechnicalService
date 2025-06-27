@@ -1,0 +1,109 @@
+﻿@page "/my-products"
+@attribute [Authorize(Policy = nameof(AppPolicies.UserAccesses))]
+
+@using TechnicalService.DTOs.DTOs.UserProductDTOs
+@using TechnicalService.DTOs.Enums
+
+
+<PageTitle>Ürünlerim</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Warehouse" Class="mr-3" Color="Color.Primary" />
+        Kayıtlı Ürünlerim
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               Class="ml-auto"
+               OnClick="OpenAddProductDialogAsync">
+        Yeni Ürün Ekle
+    </MudButton>
+</MudItem>
+
+
+<MudTable Loading="LoadingData" LoadingProgressColor="Color.Primary" Items="@FilteredProducts" Class="product-table" Hover="true" FixedHeader="true" Dense="true">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchText"
+                      Placeholder="Ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Ürün Adı</MudTh>
+        <MudTh>Seri No</MudTh>
+        <MudTh>Marka</MudTh>
+        <MudTh>Detaylar</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@context.ProductName</MudTd>
+        <MudTd>@context.Serial_Number</MudTd>
+        <MudTd>@context.BrandName</MudTd>
+        <MudTd>
+            <MudButton StartIcon="@Icons.Material.Filled.Info"
+                       Color="Color.Primary"
+                       OnClick="@(() => ShowBtnPress())">Detay Gör</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <ChildRowContent>
+        @if (ShowDetails)
+        {
+            <MudTr Class="detail-grid">
+                <MudTd colspan="3">
+                    <MudGrid Spacing="4" Class="pa-4">
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudItem class="info-item">
+                                <MudText Typo="Typo.caption" Color="Color.Primary">Ürün Türü</MudText>
+                                <MudText>@context.Type</MudText>
+                            </MudItem>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudItem class="info-item">
+                                <MudText Typo="Typo.caption" Color="Color.Primary">Satın Alma Tarihi</MudText>
+                                <MudText>@context.PurchaseDate.ToString("dd.MM.yyyy")</MudText>
+                            </MudItem>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudItem class="info-item">
+                                <MudText Typo="Typo.caption" Color="Color.Primary">Garanti Bitiş</MudText>
+                                <MudText Color="@(IsWarrantyValid(context.WarrantyDate) ? Color.Success : Color.Error)">
+                                    @context.WarrantyDate.ToString("dd.MM.yyyy")
+                                </MudText>
+                            </MudItem>
+                        </MudItem>
+                    </MudGrid>
+                </MudTd>
+            </MudTr>
+        }
+    </ChildRowContent>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (dto?.Any() == true)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" />
+                <MudItem>"@SearchText" ile bir ürün bulunamadı</MudItem>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Inventory2" Class="mb-2" />
+                <MudItem>Kayıtlı ürün bulunmamaktadır</MudItem>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredProducts.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item}" />
+        }
+    </PagerContent>
+</MudTable>

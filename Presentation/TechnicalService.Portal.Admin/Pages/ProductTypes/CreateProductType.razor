@@ -1,0 +1,77 @@
+@page "/admin/create-product-type"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.DTOs.DTOs.ProductTypeDTOs
+
+<PageTitle>Ürün Türü Oluştur</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (!IsSubmitting)
+    {
+        <MudForm Model="@createProductTypeDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.PlaylistAdd" Class="mr-2" />
+                        Yeni Ürün Türü Oluştur
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen ürün türü bilgilerini giriniz.
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string"
+                                  @bind-Value="createProductTypeDto.Type"
+                                  For="@(() => createProductTypeDto.Type)"
+                                  Immediate="true"
+                                  Label="Ürün Türü Adı"
+                                  Placeholder="Örn: Monitör, Klavye, Ekran Kartı"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Category"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6">
+                    Geri
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           OnClick="Submit"
+                           Disabled="@IsSubmitting"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Kaydet</MudText>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Kaydediliyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Ürün türü oluşturuluyor..." />
+    }
+</MudPaper>

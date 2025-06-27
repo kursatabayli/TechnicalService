@@ -1,0 +1,264 @@
+﻿@page "/admin/update-personnel/{Id:guid}"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+@using TechnicalService.DTOs.DTOs.TechnicalServiceDTOs
+
+<PageTitle>Personel Güncelle</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (!IsSubmitting)
+    {
+        <MudForm Model="@updatePersonnelDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+                        Personel Bilgilerini Güncelle
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Lütfen personel bilgilerini kontrol edip güncelleyiniz.
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="updatePersonnelDto.Name"
+                                  Label="Ad"
+                                  Placeholder="Personelin adı"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => updatePersonnelDto.Name)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.PersonOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="updatePersonnelDto.Surname"
+                                  Label="Soyad"
+                                  Placeholder="Personelin soyadı"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => updatePersonnelDto.Surname)"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="updatePersonnelDto.IdentityNumber"
+                                  Label="Kimlik Numarası"
+                                  Placeholder="T.C. Kimlik No"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  For="@(() => updatePersonnelDto.IdentityNumber)"
+                                  MaxLength="11"
+                                  Immediate="true"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Fingerprint"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudDatePicker @bind-Date="updatePersonnelDto.BirthDate"
+                                   Label="Doğum Tarihi"
+                                   Placeholder="gg.aa.yyyy"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   For="@(() => updatePersonnelDto.BirthDate)"
+                                   DateFormat="dd.MM.yyyy"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Adornment="Adornment.Start"
+                                   AdornmentIcon="@Icons.Material.Filled.Cake"
+                                   AdornmentColor="Color.Primary"
+                                   MinDate="@DateTime.Today.AddYears(-70)"
+                                   MaxDate="@DateTime.Today.AddYears(-18)"
+                                   ShowToolbar="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudSelect @bind-Value="updatePersonnelDto.Gender"
+                               T="GenderDto?"
+                               Label="Cinsiyet"
+                               For="@(() => updatePersonnelDto.Gender)"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Adornment="Adornment.Start"
+                               AdornmentIcon="@(updatePersonnelDto.Gender == GenderDto.Male ? Icons.Material.Filled.Male : updatePersonnelDto.Gender == GenderDto.Female ? Icons.Material.Filled.Female : Icons.Material.Filled.Wc)"
+                               AdornmentColor="Color.Primary"
+                               FullWidth>
+                        @foreach (var gender in Enum.GetValues<GenderDto>())
+                        {
+                            <MudSelectItem T="GenderDto?" Value="@gender">@gender.GetDescription()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudDatePicker @bind-Date="updatePersonnelDto.HireDate"
+                                   Label="İşe Giriş Tarihi"
+                                   Placeholder="gg.aa.yyyy"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   For="@(() => updatePersonnelDto.HireDate)"
+                                   DateFormat="dd.MM.yyyy"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Adornment="Adornment.Start"
+                                   AdornmentIcon="@Icons.Material.Filled.EventAvailable"
+                                   AdornmentColor="Color.Primary"
+                                   ShowToolbar="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="updatePersonnelDto.Email"
+                                  Label="İletişim E-postası"
+                                  Placeholder="kisi@example.com"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Email"
+                                  For="@(() => updatePersonnelDto.Email)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.AlternateEmail"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="updatePersonnelDto.InternalEmail"
+                                  Label="Kurum E-postası (Kullanıcı Adı)"
+                                  Placeholder="kullaniciadi@teknikservisapp.com"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Email"
+                                  For="@(() => updatePersonnelDto.InternalEmail)"
+                                  HelperText="Sisteme giriş için kullanılacak."
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.BusinessCenter"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="updatePersonnelDto.PhoneNumber"
+                                  Label="Telefon Numarası"
+                                  Placeholder="5xxxxxxxxx"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Telephone"
+                                  For="@(() => updatePersonnelDto.PhoneNumber)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Phone"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="6">
+                    <MudSelect @bind-Value="updatePersonnelDto.Role"
+                               T="RoleDto?"
+                               Label="Rol"
+                               For="@(() => updatePersonnelDto.Role)"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Adornment="Adornment.Start"
+                               AdornmentIcon="@Icons.Material.Filled.VerifiedUser"
+                               AdornmentColor="Color.Primary"
+                               FullWidth>
+                        @foreach (var role in Roles)
+                        {
+                                <MudSelectItem T="RoleDto?" Value="@role">@role.GetDescription()</MudSelectItem>
+                            }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudAutocomplete T="TechnicalServiceDto"
+                                     @bind-Value="updatePersonnelDto.TechnicalServices"
+                                     SearchFunc="SearchTechnicalService"
+                                     ToStringFunc="@(ts => ts == null ? string.Empty : ts.ServiceName)"
+                                     Label="Atanacak Servis"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     For="@(() => updatePersonnelDto.TechnicalServices)"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.HomeRepairService"
+                                     AdornmentColor="Color.Primary"
+                                     Immediate="true"
+                                     ResetValueOnEmptyText="true"
+                                     CoerceValue="true"
+                                     Clearable
+                                     Dense="true" />
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="6">
+                    <MudSelect @bind-Value="updatePersonnelDto.PersonnelStatus"
+                               T="PersonnelStatusDto?"
+                               Label="Personel Durumu"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               Adornment="Adornment.Start"
+                               AdornmentIcon="@(StatusIcon(updatePersonnelDto.PersonnelStatus ?? default))"
+                               AdornmentColor="@(StatusColor(updatePersonnelDto.PersonnelStatus ?? default))"
+                               FullWidth>
+                        @foreach (var status in Enum.GetValues<PersonnelStatusDto>())
+                        {
+                            <MudSelectItem T="PersonnelStatusDto?" Value="@status">@status.GetDescription()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField @bind-Value="updatePersonnelDto.Address"
+                                  Label="Adres"
+                                  Placeholder="Personelin açık adresi"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  InputType="InputType.Text"
+                                  Lines="3"
+                                  For="@(() => updatePersonnelDto.Address)"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.LocationOn"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6">
+                    Geri
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.SaveAs"
+                           OnClick="Submit"
+                           Disabled="@IsSubmitting"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Güncelle</MudText>
+                        
+                    }
+                    else
+                    {<MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Güncelleniyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else
+    {
+        <Loading LoadingText="Personel bilgileri yükleniyor..." />
+    }
+</MudPaper>

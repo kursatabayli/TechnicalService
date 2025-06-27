@@ -1,0 +1,27 @@
+﻿<MudDrawer Open="@UIStateOption.drawerOpen"
+           OpenChanged="@HandleDrawerOpenChanged"
+           Breakpoint="Breakpoint.Sm"
+           Variant="DrawerVariant.Mini"
+           ClipMode="DrawerClipMode.Always"
+           Elevation="2">
+    <MudNavMenu Rounded="UIStateOption.drawerOpen"
+                Class="@(UIStateOption.drawerOpen ? "pa-2" : null )"
+                Margin="@(UIStateOption.drawerOpen ? Margin.Normal : Margin.None )"
+                Bordered="!UIStateOption.drawerOpen">
+        <MudNavGroup Icon="@Icons.Material.Filled.Storage" Title="Ürünler" Expanded="false">
+            <MudNavLink Href="admin/brands/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">Markalar</MudNavLink>
+            <MudNavLink Href="admin/product-types/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Category">Ürün Türleri</MudNavLink>
+            <MudNavLink Href="admin/products/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Inventory">Ürünler</MudNavLink>
+            <MudNavLink Href="admin/serial-numbers/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ConfirmationNumber">Seri Numaraları</MudNavLink>
+        </MudNavGroup>
+        <MudNavLink Href="admin/personnels/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">Personneler</MudNavLink>
+        <MudNavLink Href="admin/service-records/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.PlaylistAddCheck">Servis Kayıtları</MudNavLink>
+        <MudNavLink Href="admin/technical-services/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.HomeRepairService">Teknik Servisler</MudNavLink>
+        <MudNavLink Href="admin/legal-documents/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Description">Yasal Belgeler</MudNavLink>
+        <MudNavLink Href="admin/profile/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AccountCircle">Profil</MudNavLink>
+
+        <MudNavLink Href="logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error" Class="mt-auto" ForceLoad="true">
+            <MudText Color="Color.Error">Çıkış Yap</MudText>
+        </MudNavLink>
+    </MudNavMenu>
+</MudDrawer>

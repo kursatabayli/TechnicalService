@@ -1,0 +1,109 @@
+﻿@page "/admin/personnels"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.PersonnelDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Portal.Admin.Constants
+@using TechnicalService.DTOs.DTOs.ServiceRecordDTOs
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Personeller</PageTitle>
+
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.SupervisedUserCircle" Class="mr-3" Color="Color.Primary" />
+        Personeller
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="() => NavigateToPage(AdminRouteConstants.AdminCreatePersonnel)">
+        Yeni Personel Kaydı
+    </MudButton>
+</MudItem>
+
+<MudTable Loading="LoadingData" LoadingProgressColor="Color.Primary" Items="@FilteredRequests" Hover="true" FixedHeader="true" Dense="false" Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchText"
+                      Placeholder="Ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PersonnelDto, object>(x => dto.IndexOf(x))">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<PersonnelDto, object>(x => x.Name + ' ' + x.Surname)">Adı-Soyadı</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<PersonnelDto, object>(x => x.ServiceName)">Servis</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<PersonnelDto, object>(x => x.Role)">Rol</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<PersonnelDto, object>(x => x.PersonnelStatus)">Durum</MudTableSortLabel></MudTh>
+        <MudTh>Düzenle</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@(dto.IndexOf(context) + 1)</MudTd>
+
+        <MudTd>
+            <MudItem class="d-flex flex-column">
+                <MudText Typo="Typo.subtitle1">@context.Name @context.Surname</MudText>
+            </MudItem>
+        </MudTd>
+
+        <MudTd>
+            <MudItem class="d-flex flex-column">
+                <MudText Typo="Typo.subtitle1">@context.ServiceName</MudText>
+            </MudItem>
+        </MudTd>
+
+        <MudTd>
+            <MudItem class="d-flex flex-column">
+                <MudText Typo="Typo.subtitle1">@context.Role.GetDescription()</MudText>
+            </MudItem>
+        </MudTd>
+
+        <MudTd>
+            <MudChip T="object" Class="status-chip"
+                     Color="@GetStatusColor(context.PersonnelStatus)"
+                     Variant="Variant.Filled">
+                @context.PersonnelStatus.GetDescription()
+            </MudChip>
+        </MudTd>
+
+        <MudTd>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="() => NavigateToPage(string.Format(AdminRouteConstants.AdminUpdatePersonnel, context.Id))">
+                Düzenle
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (dto?.Any() == true)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@SearchText" ile bir kayıt bulunamadı</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.PeopleOutline" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Personel bulunmamaktadır</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredRequests != null && FilteredRequests.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>
+

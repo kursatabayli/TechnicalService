@@ -1,0 +1,160 @@
+﻿@using TechnicalService.Shared.Constants
+@using TechnicalService.Shared.Services.Contracts
+@using MudBlazor.Utilities;
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="UIStateOption.isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
+<MudLayout>
+    <MudMainContent Class="mt-16 pa-4">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-8">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+
+    [Inject] private IUIStateService UIStateService { get; set; } = default!;
+    private MudTheme? _theme = null;
+    private UIStateOption UIStateOption { get; set; }
+    protected override void OnInitialized()
+    {
+        UIStateService.OnChange += HandleStateChange;
+        UIStateService.LoadUIState();
+        UIStateOption = UIStateService.UIState;
+        _theme = new()
+            {
+                PaletteLight = _lightPalette,
+                PaletteDark = _darkPalette,
+                LayoutProperties = new LayoutProperties()
+                {
+                    DefaultBorderRadius = "6px",
+                    DrawerWidthLeft = "280px",
+                    DrawerWidthRight = "320px",
+                    AppbarHeight = "64px"
+                },
+
+            };
+    }
+
+    private void HandleStateChange()
+    {
+        UIStateOption = UIStateService.UIState;
+        StateHasChanged();
+    }
+
+    public void Dispose() => UIStateService.OnChange -= HandleStateChange;
+
+    private readonly PaletteLight _lightPalette = new()
+        {
+            Primary = "#0969DA",
+            Secondary = "#8250DF",
+            Background = "#F6F8FA",
+            Surface = "#FFFFFF",
+            AppbarBackground = "#F6F8FA",
+            AppbarText = "#1F2328",
+            DrawerBackground = "#FFFFFF",
+            DrawerText = "#24292F",
+            DrawerIcon = "#1F2328",
+            TextPrimary = "#1F2328",
+            TextSecondary = "#57606A",
+            TextDisabled = "#8C959F",
+            ActionDefault = "#24292F",
+            ActionDisabled = "#D0D7DE",
+            ActionDisabledBackground = "#EAECEF",
+            LinesDefault = "#D8DEE4",
+            TableLines = "#D8DEE4",
+            Divider = "#D0D7DE",
+            OverlayLight = "rgba(0, 0, 0, 0.04)",
+
+            Info = "#1D76DB",
+            Success = "#2DA44E",
+            Warning = "#FFD33D",
+            Error = "#CF222E",
+
+            PrimaryDarken = "#0755B5",
+            PrimaryLighten = "#318BF8",
+            PrimaryContrastText = "#ffffff",
+
+            SecondaryDarken = "#6F42C1",
+            SecondaryLighten = "#A371F7",
+            SecondaryContrastText = "#ffffff",
+
+            ErrorDarken = "#A0151D",
+            ErrorLighten = "#EC4A4A",
+            ErrorContrastText = "#ffffff",
+
+            GrayLight = "#EDEFF2",
+            GrayLighter = "#F6F8FA",
+            GrayDark = "#D0D7DE",
+            GrayDarker = "#8C959F",
+
+            Dark = "#F6F8FA",
+            DarkLighten = "#FFFFFF",
+            DarkDarken = "#D0D7DE",
+            DarkContrastText = "#1F2328",
+
+            DividerLight = "#D8DEE4",
+            Black = "#000000",
+            White = "#ffffff"
+        };
+
+    private readonly PaletteDark _darkPalette = new()
+        {
+            Primary = "#58A6FF",
+            Secondary = "#D2A8FF",
+            Background = "#0D1117",
+            Surface = "#161B22",
+            AppbarBackground = "#0D1117",
+            AppbarText = "#C9D1D9",
+            DrawerBackground = "#161B22",
+            DrawerText = "#E6EDF3",
+            DrawerIcon = "#C9D1D9",
+            TextPrimary = "#C9D1D9",
+            TextSecondary = "#8B949E",
+            TextDisabled = "#6E7681",
+            ActionDefault = "#C9D1D9",
+            ActionDisabled = "#484F58",
+            ActionDisabledBackground = "#21262D",
+            LinesDefault = "#30363D",
+            TableLines = "#30363D",
+            Divider = "#30363D",
+            OverlayLight = "rgba(255, 255, 255, 0.05)",
+
+            Info = "#58A6FF",
+            Success = "#3FB950",
+            Warning = "#D29922",
+            Error = "#F85149",
+
+            PrimaryDarken = "#388BFD",
+            PrimaryLighten = "#79C0FF",
+            PrimaryContrastText = "#000000",
+
+            SecondaryDarken = "#B588E7",
+            SecondaryLighten = "#E2C5FF",
+            SecondaryContrastText = "#000000",
+
+            ErrorDarken = "#DA3633",
+            ErrorLighten = "#F78166",
+            ErrorContrastText = "#ffffff",
+
+            GrayLight = "#21262D",
+            GrayLighter = "#2D333B",
+            GrayDark = "#161B22",
+            GrayDarker = "#0D1117",
+
+            Dark = "#0D1117",
+            DarkLighten = "#161B22",
+            DarkDarken = "#010409",
+            DarkContrastText = "#F0F6FC",
+
+            DividerLight = "#30363D",
+            Black = "#000000",
+            White = "#ffffff"
+        };
+}

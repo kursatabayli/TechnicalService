@@ -1,0 +1,142 @@
+﻿@page "/admin/create-legal-document/"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Yeni Yasal Belge Oluştur</PageTitle>
+<MudPaper Elevation="0" Class="pa-4 mb-4 d-flex justify-space-between align-center">
+    <MudItem>
+        <MudText Typo="Typo.h5">Yeni Yasal Belge Oluştur</MudText>
+        <MudText Typo="Typo.body2">Belge türünü seçip içeriği oluşturun ve anında önizleyin.</MudText>
+    </MudItem>
+    <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.FlexEnd">
+
+        <MudButton OnClick="NavigateBack"
+                   Color="Color.Default"
+                   Variant="Variant.Outlined"
+                   StartIcon="@Icons.Material.Filled.ArrowBack"
+                   Class="px-6">
+            Geri
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="Submit"
+                   StartIcon="@Icons.Material.Filled.Save"
+                   Disabled="@(isSaving || CreateLegalDocumentDto.DocumentType == null)">
+            @if (isSaving)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Kaydediliyor...</MudText>
+            }
+            else
+            {
+                <MudText>Kaydet</MudText>
+            }
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="7">
+        <MudForm @ref="form" Model="CreateLegalDocumentDto" Validation="Validator.ValidateValue" ValidationDelay="0">
+            <MudCard Elevation="2">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Belge Editörü</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudSelect T="DocumentTypeDto?"
+                               @bind-Value="CreateLegalDocumentDto.DocumentType"
+                               Label="Belge Türü"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               For="@(() => CreateLegalDocumentDto.DocumentType)"
+                               Immediate="true"
+                               TextChanged="OnDocumentTypeChanged">
+                        @foreach (var docType in Enum.GetValues<DocumentTypeDto>())
+                        {
+                            <MudSelectItem T="DocumentTypeDto?" Value="@docType">@docType.GetDescription()</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudDivider Class="my-6" />
+
+                    @if (CreateLegalDocumentDto.DocumentType != null)
+                    {
+                        <MudTextField Typo="Typo.subtitle1" For="@(() => CreateLegalDocumentDto.Content)">İçerik</MudTextField>
+                        <MudPaper Outlined="true" Class="overflow-hidden rounded-lg rte-container">
+                            <BlazoredTextEditor @ref="editorInstance" Placeholder="" Theme="snow">
+                                <ToolbarContent>
+                                    <MudToolBar Class="rounded-t-lg">
+                                        <span class="ql-formats"><select class="ql-header"><option value="1"></option><option value="2"></option><option value="3"></option><option selected></option></select></span>
+                                        <MudButtonGroup Variant="Variant.Text" Size="Size.Medium" OverrideStyles="false">
+                                            <MudIconButton Class="ql-bold" Icon="@Icons.Material.Filled.FormatBold" Title="Kalın" />
+                                            <MudIconButton Class="ql-italic" Icon="@Icons.Material.Filled.FormatItalic" Title="İtalik" />
+                                            <MudIconButton Class="ql-underline" Icon="@Icons.Material.Filled.FormatUnderlined" Title="Altı Çizili" />
+                                            <MudIconButton Class="ql-strike" Icon="@Icons.Material.Filled.FormatStrikethrough" Title="Üstü Çizili" />
+                                        </MudButtonGroup>
+
+                                        <span class="ql-formats"><select class="ql-color"></select><select class="ql-background"></select></span>
+                                        <MudButtonGroup Variant="Variant.Text" Size="Size.Medium" OverrideStyles="false">
+                                            <MudIconButton Class="ql-list" Value="ordered" Icon="@Icons.Material.Filled.FormatListNumbered" Title="Sıralı Liste" />
+                                            <MudIconButton Class="ql-list" Value="bullet" Icon="@Icons.Material.Filled.FormatListBulleted" Title="Sırasız Liste" />
+                                            <MudIconButton Class="ql-indent" Value="-1" Icon="@Icons.Material.Filled.FormatIndentDecrease" Title="Girintiyi Azalt" />
+                                            <MudIconButton Class="ql-indent" Value="+1" Icon="@Icons.Material.Filled.FormatIndentIncrease" Title="Girintiyi Artır" />
+                                        </MudButtonGroup>
+
+                                        <MudButtonGroup Variant="Variant.Text" Size="Size.Medium" OverrideStyles="false">
+                                            <MudIconButton Class="ql-link" Icon="@Icons.Material.Filled.Link" Title="Bağlantı Ekle" />
+                                            <MudIconButton Class="ql-blockquote" Icon="@Icons.Material.Filled.FormatQuote" Title="Alıntı Bloğu" />
+                                        </MudButtonGroup>
+
+                                        <span class="ql-formats">
+                                            <select class="ql-align"></select>
+                                        </span>
+
+                                        <MudIconButton Class="ql-clean" Icon="@Icons.Material.Filled.CleaningServices" Title="Formatlamayı Temizle" Size="Size.Medium" />
+
+                                    </MudToolBar>
+                                </ToolbarContent>
+                                <EditorContent></EditorContent>
+                            </BlazoredTextEditor>
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">İçerik editörünü aktif hale getirmek için lütfen bir belge türü seçin.</MudAlert>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudForm>
+    </MudItem>
+
+    <MudItem xs="12" md="5">
+        <MudCard Elevation="2" Style="position: sticky; top: 80px;">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Canlı Önizleme</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudPaper Outlined="true" Class="pa-4" Style="min-height: 400px; max-height: 70vh; overflow-y: auto;">
+                    @if (!string.IsNullOrWhiteSpace(previewContent))
+                    {
+                        <MudItem class="mud-typography-body1">
+                            @((MarkupString)previewContent)
+                        </MudItem>
+                    }
+                    else
+                    {
+                        <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Style="height: 400px;">
+                            <MudIcon Icon="@Icons.Material.Rounded.VisibilityOff" Size="Size.Large" Color="Color.Dark" />
+                            <MudText Typo="Typo.body1" Class="mt-4">Önizlenecek içerik bulunmuyor.</MudText>
+                            <MudText Typo="Typo.body2" Class="mt-1">Lütfen içerik oluşturun ve yenile butonuna basın.</MudText>
+                        </MudStack>
+                    }
+                </MudPaper>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>

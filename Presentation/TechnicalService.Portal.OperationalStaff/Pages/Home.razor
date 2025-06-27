@@ -1,0 +1,13 @@
+﻿@page "/operational"
+@attribute [Authorize(Policy = nameof(AppPolicies.OperationalStaff))]
+@layout OperationalStaffLayout
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Ana Sayfa</PageTitle>
+
+<MudGrid Spacing="3">
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5" Color="Color.Primary">Hoş geldiniz!</MudText>
+    </MudItem>
+</MudGrid>

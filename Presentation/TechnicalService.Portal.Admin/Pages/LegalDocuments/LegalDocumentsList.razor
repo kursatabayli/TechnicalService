@@ -1,0 +1,91 @@
+﻿@page "/admin/legal-documents"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.DTOs.DTOs.LegalDocumentDTOs
+@using TechnicalService.Portal.Admin.Constants
+@using TechnicalService.Shared.Extensions
+
+<PageTitle>Yasal Belgeler</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Category" Class="mr-3" Color="Color.Primary" /> @* İkon güncellendi *@
+        Yasal Belgeler
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="() => NavigateToPage(AdminRouteConstants.AdminCreateLegalDocument)">
+        Yeni Yasal Belge Ekle
+    </MudButton>
+</MudItem>
+
+<MudTable Items="@FilteredProductTypes"
+          Hover="true"
+          FixedHeader="true"
+          Loading="@_isLoading"
+          LoadingProgressColor="Color.Primary"
+          Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchText"
+                      Placeholder="Ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LegalDocumentDto, object>(x => legalDocumentDtos.IndexOf(x))">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<LegalDocumentDto, object>(x => x.DocumentType)">Belge Türü</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <LoadingContent>
+        <Loading />
+    </LoadingContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="#">@(legalDocumentDtos.IndexOf(context) + 1)</MudTd>
+        <MudTd DataLabel="Belge Türü">@context.DocumentType.GetDescription()</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           Class="mr-2"
+                           OnClick='() => NavigateToPage(string.Format(AdminRouteConstants.AdminUpdateLegalDocument, context.Id))' />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           OnClick="@(() => ShowDeleteConfirmationDialogAsync(context))" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (legalDocumentDtos?.Any() == true && !string.IsNullOrEmpty(_searchText))
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@_searchText" ile eşleşen yasal belge bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Category" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Kayıtlı yasal belge bulunmamaktadır.</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">Yukarıdaki "Yeni Yasal Belge Ekle" butonu ile yeni bir yasal belge oluşturabilirsiniz.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredProductTypes != null && FilteredProductTypes.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>

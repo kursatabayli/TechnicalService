@@ -1,0 +1,136 @@
+﻿@page "/admin/update-product/{Id:int}"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.DTOs.BrandDTOs
+@using TechnicalService.DTOs.DTOs.ProductTypeDTOs
+@using TechnicalService.DTOs.Enums
+
+
+<PageTitle>Ürün Güncelle</PageTitle>
+
+<MudPaper Class="form-container" Elevation="3">
+    @if (UpdateProductDto == null && IsSubmitting)
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Ürün bilgileri yükleniyor...</MudText>
+            </MudItem>
+        </MudGrid>
+    }
+    else if (UpdateProductDto != null && !IsSubmitting)
+    {
+        <MudForm Model="@UpdateProductDto" @ref="@form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Spacing="4" Justify="Justify.Center">
+
+                <MudItem xs="12" sm="10" md="8" class="form-header">
+                    <MudText Typo="Typo.h4" Color="Color.Primary" Class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.EditNote" Class="mr-2" />
+                        Ürün Güncelle
+                    </MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Tertiary" Class="mt-1">
+                        Ürün bilgilerini düzenleyebilirsiniz. (@UpdateProductDto.ProductName)
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudTextField T="string"
+                                  @bind-Value="UpdateProductDto.ProductName"
+                                  For="@(() => UpdateProductDto.ProductName)"
+                                  Immediate="true"
+                                  Label="Ürün Adı (Model)"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.DriveFileRenameOutline"
+                                  AdornmentColor="Color.Primary"
+                                  Clearable
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudAutocomplete T="BrandDto"
+                                     @bind-Value="@UpdateProductDto.Brand"
+                                     SearchFunc="SearchBrands"
+                                     ToStringFunc="@(b => b?.BrandName ?? string.Empty)"
+                                     For="@(() => UpdateProductDto.Brand)"
+                                     Immediate="true"
+                                     Label="Marka"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.Label"
+                                     AdornmentColor="Color.Primary"
+                                     ResetValueOnEmptyText="true"
+                                     Dense="true"
+                                     Clearable
+                                     FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="10" md="8">
+                    <MudAutocomplete T="ProductTypeDto"
+                                     @bind-Value="@UpdateProductDto.ProductType"
+                                     SearchFunc="SearchProductTypes"
+                                     ToStringFunc="@(pt => pt?.Type ?? string.Empty)"
+                                     For="@(() => UpdateProductDto.ProductType)"
+                                     Immediate="true"
+                                     Label="Ürün Türü"
+                                     Variant="Variant.Outlined"
+                                     Margin="Margin.Dense"
+                                     Adornment="Adornment.Start"
+                                     AdornmentIcon="@Icons.Material.Filled.Category"
+                                     AdornmentColor="Color.Primary"
+                                     ResetValueOnEmptyText="true"
+                                     Dense="true"
+                                     Clearable
+                                     FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" sm="12" />
+            </MudGrid>
+
+            <MudStack Row="true" Spacing="3" Class="mt-6 mb-2" Justify="Justify.Center">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Class="px-6">
+                    Geri
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.SaveAs"
+                           OnClick="Submit"
+                           Disabled="@IsSubmitting"
+                           Class="px-6">
+                    @if (!IsSubmitting)
+                    {
+                        <MudText>Güncelle</MudText>
+
+                    }
+                    else
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Güncelleniyor...</MudText>
+                    }
+                </MudButton>
+            </MudStack>
+        </MudForm>
+    }
+    else if (IsSubmitting)
+    {
+           <Loading LoadingText="Ürün güncelleniyor..." />
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center" Class="py-8">
+            <MudItem xs="12" Class="d-flex flex-column align-center">
+                <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="mt-4">Ürün bulunamadı.</MudText>
+                <MudButton OnClick="NavigateBack" Variant="Variant.Text" Color="Color.Primary" Class="mt-4">Geri Dön</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>

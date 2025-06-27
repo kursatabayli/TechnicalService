@@ -1,0 +1,137 @@
+﻿@using TechnicalService.DTOs.DTOs.ServiceRecordDTOs
+@using TechnicalService.DTOs.Results
+@using TechnicalService.Portal.OperationalStaff.Constants
+@using TechnicalService.Shared.Constants
+@using TechnicalService.Shared.Extensions
+@using TechnicalService.Shared.Services.Contracts
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Search" Class="mr-2" />
+            Servis Kaydı Arama
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudItem class="d-flex gap-2">
+                    <MudTextField @bind-Value="_searchQuery"
+                                  Label="Takip No, Seri Numarası veya Telefon Numarası"
+                                  Variant="Variant.Outlined"
+                                  Class="flex-grow-1"
+                                  OnAdornmentClick="SearchAsync"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  AdornmentAriaLabel="Ara"
+                                  Disabled="@_isSearching" 
+                                  OnKeyDown="HandleKeyDown"/>
+                </MudItem>
+            </MudItem>
+
+            <MudItem xs="12" Style="min-height: 250px;">
+                @if (_isSearching)
+                {
+                    <MudItem class="d-flex justify-center align-center fill-height">
+                        <Loading />
+                    </MudItem>
+                }
+                else if (_searchResults != null)
+                {
+                    @if (_searchResults.Any())
+                    {
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Arama Sonuçları:</MudText>
+                        <MudPaper Outlined="true" Class="rounded-lg" Style="max-height: 250px; overflow-y: auto;">
+                            <MudList T="ServiceRecordListDto">
+                                @foreach (var result in _searchResults)
+                                {
+                                    <MudListItem OnClick="@(() => NavigateToRecord(result.Id))">
+                                        <MudItem class="d-flex flex-column">
+                                            <MudText><b>Takip No:</b> @result.Id.ToString().Substring(0, 8).ToUpper()</MudText>
+                                            <MudText Typo="Typo.body2"><b>Müşteri:</b> @result.UserFullName</MudText>
+                                            <MudText Typo="Typo.caption" Class="text-grey"><b>Ürün:</b> @result.ProductDetail</MudText>
+                                        </MudItem>
+                                    </MudListItem>
+                                    @if (result != _searchResults.Last())
+                                    {
+                                        <MudDivider />
+                                    }
+                                }
+                            </MudList>
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudItem class="d-flex justify-center align-center fill-height">
+                             <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+                                 Arama kriterlerinize uygun kayıt bulunamadı.
+                             </MudAlert>
+                        </MudItem>
+                    }
+                }
+                else
+                {
+                     <MudItem class="d-flex justify-center align-center fill-height">
+                         <MudText Typo="Typo.body2" Class="text-grey">Aramak için bir değer girin.</MudText>
+                     </MudItem>
+                }
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">Kapat</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance DialogInstance { get; set; }
+    [Inject] IDataService<Result<List<ServiceRecordListDto>>> ServiceRecordDataService { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
+
+    [Inject] NavigationManager NavigationManager { get; set; }
+
+    private string _searchQuery = string.Empty;
+    private bool _isSearching = false;
+    private List<ServiceRecordListDto>? _searchResults;
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            return;
+        }
+
+        _isSearching = true;
+
+        var result = await ServiceRecordDataService.GetAsync(Endpoints.SearchServiceRecord + _searchQuery, ClientTypes.PersonnelAuthClient);
+
+        if (result.IsSuccess)
+        {
+            _searchResults = result.Data;
+        }
+        else
+        {
+            _searchResults = new List<ServiceRecordListDto>();
+            Snackbar.Add(result.StatusMessage, Severity.Error);
+        }
+
+        _isSearching = false;
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchAsync();
+        }
+    }
+
+    private void NavigateToRecord(Guid recordId)
+    {
+        NavigationManager.NavigateTo(string.Format(OperationalStaffRouteConstants.ServiceRecordDetail, recordId));
+        DialogInstance.Close();
+    }
+
+    void Cancel() => DialogInstance.Cancel();
+}

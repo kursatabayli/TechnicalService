@@ -1,0 +1,25 @@
+﻿@page "/logout"
+@attribute [AllowAnonymous]
+
+@using TechnicalService.Shared.AuthHelpers
+@using TechnicalService.Shared.Constants
+@using TechnicalService.Shared.Services.Contracts
+
+
+@code {
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private CustomAuthStateProvider AuthStateProvider { get; set; }
+    [Inject] private IAuthService AuthService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await AuthService.LogoutAsync(Endpoints.PersonnelLogout, ClientTypes.PersonnelPublicClient);
+        if (response.IsSuccess)
+        {
+            AuthStateProvider.NotifyUserLoggedOut();
+            NavigationManager.NavigateTo("/login", true);
+        }
+        else
+            Snackbar.Add("Çıkış işlemi sırasında bir hata oluştu.", Severity.Error);
+    }
+}

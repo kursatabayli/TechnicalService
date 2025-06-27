@@ -1,0 +1,109 @@
+﻿@page "/admin/profile"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.Enums
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@using TechnicalService.Portal.Admin.Constants
+@using TechnicalService.Shared.Extensions
+
+
+<PageTitle>Profilim</PageTitle>
+@if (PersonnelDto == null && isLoading)
+{
+    <MudPaper Class="pa-4 mt-4" Elevation="0">
+        <Loading LoadingText="Profil bilgileri yükleniyor..." />
+    </MudPaper>
+}
+else if (PersonnelDto != null)
+{
+    <MudGrid Spacing="4" Class="mt-4">
+        <MudItem xs="12" md="4">
+            <MudCard Elevation="3" Style="height: 100%;" Class="d-flex flex-column">
+                <MudCardContent Class="flex-grow-1">
+                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                        <MudAvatar Style="height:150px; width:150px; font-size: 5rem; margin-top:16px;" Color="Color.Primary">
+                            @if (!string.IsNullOrEmpty(PersonnelDto.Name))
+                            {
+                                @PersonnelDto.Name.FirstOrDefault()
+                                @PersonnelDto.Surname.FirstOrDefault()
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Person" />
+                            }
+                        </MudAvatar>
+                        <MudText Typo="Typo.h5" Class="mt-2">@PersonnelDto.Name @PersonnelDto.Surname</MudText>
+                        <MudText Typo="Typo.body1" Color="Color.Secondary">@PersonnelDto.Role.GetDescription()</MudText>
+                    </MudStack>
+                    <MudDivider Class="my-4" />
+                    <MudStack Spacing="3">
+                        <InfoItem Icon="@(StatusIcon(PersonnelDto.PersonnelStatus))" Label="Personel Durumu" Value="@(PersonnelDto.PersonnelStatus.GetDescription())" IconColor="@(StatusColor(PersonnelDto.PersonnelStatus))" />
+                        <InfoItem Icon="@Icons.Material.Filled.EventAvailable" Label="İşe Giriş Tarihi" Value="@(PersonnelDto.HireDate?.ToString("dd MMMM yyyy"))" />
+                    </MudStack>
+                </MudCardContent>
+                <MudCardActions Class="pa-4">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Password"
+                               OnClick="@(() => NavigatePage(AdminRouteConstants.AdminChangePassword))"
+                               FullWidth="true"
+                               Size="Size.Large">
+                        Şifreyi Değiştir
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" md="8">
+            <MudStack Spacing="4">
+                <MudCard Elevation="3">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Kişisel Bilgiler</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIcon Icon="@Icons.Material.Filled.AccountBox" Color="Color.Primary" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid Spacing="3">
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.PersonOutline" Label="Adı-Soyadı" Value="@(PersonnelDto.Name + " " + PersonnelDto.Surname)" /></MudItem>
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.Fingerprint" Label="Kimlik Numarası" Value="@PersonnelDto.IdentityNumber" /></MudItem>
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.Cake" Label="Doğum Tarihi" Value="@(PersonnelDto.BirthDate?.ToString("dd MMMM yyyy"))" /></MudItem>
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@(PersonnelDto.Gender == GenderDto.Male ? Icons.Material.Filled.Male : Icons.Material.Filled.Female)" Label="Cinsiyet" Value="@(PersonnelDto.Gender?.GetDescription())" /></MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+
+                <MudCard Elevation="3">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">İletişim ve Kurum Bilgileri</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid Spacing="3">
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.BusinessCenter" Label="Kurum E-postası (Kullanıcı Adı)" Value="@PersonnelDto.InternalEmail" /></MudItem>
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.AlternateEmail" Label="İletişim E-postası" Value="@PersonnelDto.Email" /></MudItem>
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.Phone" Label="Telefon Numarası" Value="@PersonnelDto.PhoneNumber" /></MudItem>
+                            <MudItem xs="12" sm="6"><InfoItem Icon="@Icons.Material.Filled.HomeRepairService" Label="Atandığı Servis" Value="@PersonnelDto.ServiceName" /></MudItem>
+                            <MudItem xs="12"><InfoItem Icon="@Icons.Material.Filled.LocationOn" Label="Adres" Value="@PersonnelDto.Address" /></MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudPaper Class="pa-8 mt-4 d-flex flex-column align-center" Elevation="0">
+        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Style="font-size: 4rem;" />
+        <MudText Typo="Typo.h6" Class="mt-4">Profil Bilgileri Yüklenemedi</MudText>
+        <MudText Align="Align.Center" Class="mt-2">Bilgileriniz bulunamadı veya bir hata oluştu. Lütfen sistem yöneticinizle iletişime geçin.</MudText>
+    </MudPaper>
+}

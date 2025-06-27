@@ -1,0 +1,99 @@
+﻿@page "/Locations"
+@attribute [AllowAnonymous]
+@using TechnicalService.DTOs.DTOs.TechnicalServiceDTOs;
+
+<PageTitle>Servisler</PageTitle>
+
+<MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="d-flex align-center justify-center">
+    <MudIcon Icon="@Icons.Material.Filled.Map" Color="Color.Primary" Class="mr-3" Style="font-size: 2.5rem;" />
+    Servis Noktalarımız
+</MudText>
+<MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Inherit" Class="mb-6">
+    Harita üzerinden veya aşağıdaki listeden servislerimizi bulun ve kolayca yol tarifi alın.
+</MudText>
+
+<MudExpansionPanels MultiExpansion="true" Class="mb-6">
+    <MudExpansionPanel Text="Haritayı Göster/Gizle" Expanded="true" Class="mud-elevation-3">
+        <MudPaper Elevation="0" Class="rounded-lg overflow-hidden" Style="height: 60vh;">
+            <MudItem id="mapContainer" style="height: 100%; width: 100%;"></MudItem>
+        </MudPaper>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+<MudTable Items="@FilteredServices"
+          Hover="true"
+          FixedHeader="true"
+          Loading="@_isLoading"
+          LoadingProgressColor="Color.Primary"
+          Class="request-table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Servis Listesi</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchText"
+                      Placeholder="Servis adı, şehir veya ilçe ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense"
+                      Immediate="true"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<TechnicalServiceDto, object>(x => x.ServiceName)">Servis Adı</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TechnicalServiceDto, object>(x => x.City)">Adres</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<TechnicalServiceDto, object>(x => x.Phone)">Telefon</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Servis Adı">@context.ServiceName</MudTd>
+        <MudTd DataLabel="Adres">@($"{context.Address}, {context.PostalCode} {context.District}/{context.City}")</MudTd>
+        <MudTd DataLabel="Telefon">@context.Phone</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Directions"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           Title="Yol Tarifi Al"
+                           Href="@GetDirectionsUrl(context)" Target="_blank" />
+
+            <MudIconButton Icon="@(_copiedItemIds.Contains(context.Id) ? Icons.Material.Filled.Check : Icons.Material.Filled.ContentCopy)"
+                           Color="@(_copiedItemIds.Contains(context.Id) ? Color.Success : Color.Default)"
+                           Ripple="true"
+                           Size="Size.Small"
+                           Title="Adresi Kopyala"
+                           OnClick="() => CopyAddress(context)"
+                           Disabled="@(_copiedItemIds.Contains(context.Id))" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (_services?.Any() == true && !string.IsNullOrEmpty(_searchText))
+            {
+                <MudText Typo="Typo.h6">"@_searchText" ile eşleşen servis bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6">Gösterilecek servis bulunmamaktadır.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        <MudText Class="mt-2">Servisler yükleniyor...</MudText>
+    </LoadingContent>
+
+    <PagerContent>
+        @if (FilteredServices != null && FilteredServices.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>
+
+<MudScrollToTop>
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowUpward" />
+</MudScrollToTop>

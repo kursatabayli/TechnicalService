@@ -1,0 +1,57 @@
+﻿@using TechnicalService.DTOs.Enums
+@attribute [Authorize(Policy = nameof(AppPolicies.UserAccesses))]
+
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid Class="pa-4" Spacing="4">
+            @if (!IsSubmitting)
+            {
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h6" Class="d-flex align-center mb-4" Color="Color.Primary">
+                        <MudIcon Icon="@Icons.Material.Filled.AddCircle" Class="mr-2" />
+                        Yeni Ürün Kaydı
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudForm Model="AddUserProduct" @ref="form" Validation="@(Validator.ValidateValue)" ValidationDelay="0" @onsubmit="Submit">
+                        <MudTextField Label="Seri Numarası"
+                                      @bind-Value="AddUserProduct.SerialNumber"
+                                      Variant="Variant.Outlined"
+                                      Immediate="true"
+                                      For="@(() => AddUserProduct.SerialNumber)"
+                                      Clearable
+                                      AdornmentIcon="@Icons.Material.Filled.Numbers"
+                                      Class="mb-4" />
+
+                        <MudDatePicker Label="Satın Alma Tarihi"
+                                       @bind-Date="AddUserProduct.PurchaseDate"
+                                       Variant="Variant.Outlined"
+                                       DateFormat="dd.MM.yyyy"
+                                       MaxDate="@DateTime.Today"
+                                       MinDate="@DateTime.Today.AddYears(-5)"
+                                       For="@(() => AddUserProduct.PurchaseDate)"
+                                       AdornmentIcon="@Icons.Material.Filled.Event"
+                                       ShowToolbar="false"
+                                       Class="mb-4" />
+                    </MudForm>
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="12" Class="text-center py-8">
+                    <Loading LoadingText="Ürün Kontrol Ediliyor..." />
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+
+    <DialogActions>
+        @if (!IsSubmitting)
+        {
+            <MudButton OnClick="Cancel" Variant="Variant.Text">İptal</MudButton>
+            <MudButton OnClick="Submit" Color="Color.Primary" Variant="Variant.Filled">Ekle</MudButton>
+        }
+    </DialogActions>
+</MudDialog>

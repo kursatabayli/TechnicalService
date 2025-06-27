@@ -1,0 +1,29 @@
+﻿@using TechnicalService.DTOs.DTOs.UserProductDTOs
+@using TechnicalService.DTOs.Enums  
+@attribute [Authorize(Policy = nameof(AppPolicies.OperationalStaff))]
+
+@if (UserProduct == null)  
+{  
+    <Loading />  
+}  
+else  
+{  
+    <MudCard Elevation="2" Class="fill-height mud-width-full">
+        <MudCardHeader>
+            <CardHeaderContent>  
+                <MudText Typo="Typo.h6">Ürün Bilgileri</MudText>  
+            </CardHeaderContent>  
+        </MudCardHeader>
+        <MudList T="string" ReadOnly Class="pa-2">
+            <MudListItem Icon="@Icons.Material.Filled.Label" Text="@($"{UserProduct.BrandName} {UserProduct.ProductName}")" />  
+            <MudListItem Icon="@Icons.Material.Filled.Category" Text="@UserProduct.Type"/>  
+            <MudListItem Icon="@Icons.Material.Filled.ConfirmationNumber" Text="@UserProduct.Serial_Number" />  
+            <MudListItem Icon="@Icons.Material.Filled.Shield" Text="@($"Garanti Bitişi: {UserProduct.WarrantyDate.ToShortDateString()}")" />  
+            <MudListItem Icon="@Icons.Material.Filled.DateRange" Text="@($"Satın Alım: {UserProduct.PurchaseDate.ToShortDateString()}")" />  
+        </MudList>  
+    </MudCard>  
+}  
+
+@code {
+    [Parameter] public UserProductDto UserProduct { get; set; }
+}

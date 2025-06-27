@@ -1,0 +1,30 @@
+﻿@attribute [Authorize(Policy = nameof(AppPolicies.OperationalStaff))]
+@using TechnicalService.DTOs.DTOs.UserDTOs
+@using TechnicalService.DTOs.Enums
+
+<AuthorizeView>
+    @if (User == null)
+    {
+        <Loading />
+    }
+    else
+    {
+        <MudCard Elevation="2" Class="fill-height mud-width-full">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Müşteri Bilgileri</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudList T="string" ReadOnly Class="pa-2">
+                <MudListItem Icon="@Icons.Material.Filled.Person" Text="@($"{User.Name} {User.Surname}")" />
+                <MudListItem Icon="@Icons.Material.Filled.Email" Text="@User.Email" />
+                <MudListItem Icon="@Icons.Material.Filled.Phone" Text="@User.PhoneNumber" />
+                <MudListItem Icon="@Icons.Material.Filled.Home" Text="@(User.Address ?? "Belirtilmemiş")" />
+                <MudListItem Icon="@Icons.Material.Filled.Cake" Text="@(User.BirthDate.HasValue? User.BirthDate.Value.ToShortDateString() : "Belirtilmemiş")" />
+            </MudList>
+        </MudCard>
+    }
+</AuthorizeView>
+@code {
+    [Parameter] public UserDto User { get; set; }
+}

@@ -1,0 +1,137 @@
+﻿@page "/my-profile"
+@attribute [Authorize(Policy = nameof(AppPolicies.UserAccesses))]
+@using TechnicalService.DTOs.DTOs.UserDTOs
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.Shared.Extensions
+@using TechnicalService.UserUI.Constants
+
+<PageTitle>Profilim</PageTitle>
+
+@if (dto == null)
+{
+    <Loading />
+}
+else
+{
+    <MudPaper Elevation="10" Class="rounded-lg overflow-hidden">
+        <MudItem Class="profile-header pa-8 text-center">
+            <MudText Typo="Typo.h4" Color="Color.Default">@dto.Name @dto.Surname</MudText>
+        </MudItem>
+
+        <MudGrid Spacing="4" Class="pa-6">
+            <MudItem xs="12" md="6">
+                <MudCard Class="info-card h-100">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudIcon Icon="@Icons.Material.Filled.Person" />
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>Kişisel Bilgiler</CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList T="UserDto" Class="compact-icon-list">
+                            <MudListItem Icon="@Icons.Material.Filled.Cake">
+                                <MudText>
+                                    <strong>
+                                        Doğum Tarihi:
+                                    </strong>
+                                    <span Class="@(dto.BirthDate == null ? "empty-field" : "")">
+                                        @(dto.BirthDate?.ToString("dd.MM.yyyy") ?? "Belirtilmemiş")
+                                    </span>
+                                </MudText>
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.Transgender">
+                                <MudText>
+                                    <strong>
+                                        Cinsiyet:
+                                    </strong>
+                                    <span Class="@(dto.Gender.Equals(GenderDto.Empty) ? "empty-field" : "")">
+                                        @(dto.Gender.Equals(GenderDto.Empty) ? "Belirtilmemiş" : dto.Gender.GetDescription())
+                                    </span>
+                                </MudText>
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.HowToReg">
+                                <MudText>
+                                    <strong>
+                                        Üyelik Tarihi:
+                                    </strong>
+                                    @dto.RegisterDate.ToString("dd MMMM yyyy")
+                                </MudText>
+                            </MudListItem>
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <!-- İletişim Bilgileri -->
+            <MudItem xs="12" md="6">
+                <MudCard Class="info-card h-100">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudIcon Icon="@Icons.Material.Filled.ContactPhone" />
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>İletişim</CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList T="UserDto" Class="compact-icon-list">
+                            <MudListItem Icon="@Icons.Material.Filled.Email">
+                                <MudText>
+                                    <strong>
+                                        E-Posta:
+                                    </strong>
+                                    <span>
+                                        @dto.Email
+                                    </span>
+                                    @* <MudIcon Class="ml-2"
+                                                 Icon="@(dto.IsEmailConfirmed ? Icons.Material.Filled.Verified : Icons.Material.Filled.Error)"
+                                                 Color="@(dto.IsEmailConfirmed ? Color.Success : Color.Error)" /> *@
+                                </MudText>
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.Phone">
+                                <MudText>
+                                    <strong>
+                                        Telefon:
+                                    </strong>
+                                    <span>
+                                        @dto.PhoneNumber
+                                    </span>
+                                    @* <MudIcon Class="ml-2"
+                                                 Icon="@(dto.IsPhoneNumberConfirmed ? Icons.Material.Filled.Verified : Icons.Material.Filled.Error)"
+                                                 Color="@(dto.IsPhoneNumberConfirmed ? Color.Success : Color.Error)" /> *@
+                                </MudText>
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.LocationOn">
+                                <MudText>
+                                    <strong>
+                                        Adres:
+                                    </strong>
+                                    <span Class="@(string.IsNullOrEmpty(dto.Address) ? "empty-field" : "")">
+                                        @(!string.IsNullOrEmpty(dto.Address) ? dto.Address : "Belirtilmemiş")
+                                    </span>
+                                </MudText>
+                            </MudListItem>
+
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Aksiyon Butonları -->
+        <MudStack Row Class="pa-4" Justify="Justify.Center" Spacing="4" Breakpoint="Breakpoint.Sm">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Edit"
+                       Href="@UserRouteConstants.EditProfile"
+                       Class="px-6">
+                Profili Düzenle
+            </MudButton>
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Secondary"
+                       StartIcon="@Icons.Material.Filled.Password"
+                       Href="@UserRouteConstants.ChangePassword"
+                       Class="px-6">
+                Şifre Değiştir
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+}

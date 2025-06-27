@@ -1,0 +1,40 @@
+﻿<MudDialog Style="height: 400px">
+    <DialogContent>
+        @if (_loading)
+        {
+            <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+        }
+        else
+        {
+            <MudText Style="white-space: pre-wrap;">@((MarkupString)LicenseText)</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Ok">Onayla</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _loading = true;
+
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+    
+    [Parameter]
+    public string LicenseText { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await base.OnInitializedAsync();
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Ok() => MudDialog.Close(DialogResult.Ok(true));
+}

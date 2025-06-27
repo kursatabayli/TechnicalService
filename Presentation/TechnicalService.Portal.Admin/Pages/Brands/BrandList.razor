@@ -1,0 +1,85 @@
+﻿@page "/admin/brands"
+@layout AdminLayout
+@attribute [Authorize(Policy = nameof(AppPolicies.AdminOnly))]
+@using TechnicalService.DTOs.Enums
+@using TechnicalService.DTOs.DTOs.BrandDTOs
+@using TechnicalService.Portal.Admin.Constants
+
+<PageTitle>Markalar</PageTitle>
+
+<MudItem class="d-flex align-center justify-space-between mb-6">
+    <MudText Typo="Typo.h4" Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Label" Class="mr-3" Color="Color.Primary" />
+        Markalar
+    </MudText>
+    <MudButton Color="Color.Primary"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="() => NavigateToPage(AdminRouteConstants.AdminCreateBrands)">
+        Yeni Marka Ekle
+    </MudButton>
+</MudItem>
+
+<MudTable Items="@FilteredBrands" Hover="true" FixedHeader="true" Loading="@_isLoading" LoadingProgressColor="Color.Primary" Class="request-table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchText"
+                      Placeholder="Ara..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Class="mt-0"
+                      Clearable />
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<BrandDto, object>(x => _brands.IndexOf(x))">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<BrandDto, object>(x => x.BrandName)">Marka</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align:center">İşlemler</MudTh>
+    </HeaderContent>
+
+    <LoadingContent>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </LoadingContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="#">@(_brands.IndexOf(context) + 1)</MudTd>
+        <MudTd DataLabel="Marka">@context.BrandName</MudTd>
+        <MudTd DataLabel="İşlemler" Style="text-align:center">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           Class="mr-2"
+                           OnClick="() => NavigateToPage(string.Format(AdminRouteConstants.AdminUpdateBrands, context.Id))" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           OnClick="() => ShowDeleteConfirmationDialogAsync(context)" />
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        <MudText Class="pa-4" Align="Align.Center">
+            @if (_brands?.Any() == true && !string.IsNullOrEmpty(_searchText))
+            {
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">"@_searchText" ile eşleşen marka bulunamadı.</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.LabelOff" Class="mb-2" Style="font-size: 48px;" />
+                <MudText Typo="Typo.h6">Kayıtlı marka bulunmamaktadır.</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">Yukarıdaki "Yeni Marka Ekle" butonu ile yeni bir marka oluşturabilirsiniz.</MudText>
+            }
+        </MudText>
+    </NoRecordsContent>
+
+    <PagerContent>
+        @if (FilteredBrands != null && FilteredBrands.Count() > 10)
+        {
+            <MudTablePager RowsPerPageString="Sayfa Başına Girdi" InfoFormat="{first_item}-{last_item} / {all_items}" />
+        }
+    </PagerContent>
+</MudTable>
