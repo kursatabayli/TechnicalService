@@ -67,13 +67,8 @@ Follow the steps below to run the project on your local machine:
     * Open the `appsettings.Development.json` (or `appsettings.json`) file in the `Presentation/TechnicalService.WebAPI/` directory.
     * Update the `ConnectionStrings` section with your own database connection details.
     * Fill in the sensitive settings like `JwtSection`, `SmtpSettings`, and `SmsSection` with your service credentials.
-
-3.  **Google Maps API Key:**
-    * Open the `Presentation/TechnicalService.UserUI/wwwroot/index.html` file.
-    * In the line `https://maps.googleapis.com/maps/api/js?key=API_KEY`, replace `API_KEY` with your own Google Maps API key.
-    * Do the same for the `API_KEY` in the `Presentation/TechnicalService.Portal/wwwroot/js/mapInterop.js` file.
-
-4.  **Running the Project:**
+      
+3.  **Running the Project:**
     * Open the `TechnicalService.sln` solution in Visual Studio.
     * In the Solution Explorer, right-click the Solution and select `Configure Startup Projects...`.
     * Select the `Multiple startup projects` option and set the `Action` for `TechnicalService.WebAPI`, `TechnicalService.UserUI`, and `TechnicalService.Portal` projects to `Start`.
