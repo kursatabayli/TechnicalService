@@ -60,7 +60,7 @@ Follow the steps below to run the project on your local machine:
 
 1.  **Clone the Project:**
     ```bash
-    git clone [https://github.com/kursatabayli/technicalservice.git](https://github.com/kursatabayli/technicalservice.git)
+    git clone https://github.com/kursatabayli/TechnicalService.git
     ```
 
 2.  **Database and API Configuration:**
